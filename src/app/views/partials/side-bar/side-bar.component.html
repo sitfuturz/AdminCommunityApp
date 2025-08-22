@@ -1,0 +1,127 @@
+<!-- side-bar.component.html -->
+
+<!-- Mobile Overlay -->
+<div class="sidebar-overlay" 
+     [class.active]="isSidebarOpen && isMobile" 
+     (click)="closeSidebar()"></div>
+
+<!-- Sidebar Toggle Button for Mobile -->
+<button class="mobile-toggle-btn d-lg-none" 
+        type="button" 
+        (click)="toggleSidebar()"
+        [class.active]="isSidebarOpen">
+  <span class="hamburger-line"></span>
+  <span class="hamburger-line"></span>
+  <span class="hamburger-line"></span>
+</button>
+
+<!-- Sidebar -->
+<nav id="sidebar" 
+     class="sidebar js-sidebar" 
+     [class.active]="isSidebarOpen"
+     [class.mobile]="isMobile">
+  
+  <div class="sidebar-content js-simplebar">
+    <!-- Brand Logo -->
+    <div class="sidebar-brand">
+      <div class="brand-container">
+        <div class="logo-section">
+          <img src="assets/images/download.png" 
+               alt="Company Logo" 
+               class="company-logo"
+               onerror="this.style.display='none'">
+          <div class="brand-text">
+            <h5 class="app-title">LNG Application</h5>
+            <span class="app-subtitle">Management System</span>
+          </div>
+        </div>
+        
+        <!-- Close button for mobile -->
+        <button class="close-btn d-lg-none" 
+                (click)="closeSidebar()">
+          <i class="align-middle" data-feather="x"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar-nav">
+      <div class="nav-section">
+        <ul class="nav-list">
+          <ng-container *ngFor="let module of sideBarService.list">
+            <li class="nav-item" 
+                *ngFor="let item of module.menus; let i = index">
+              
+              <!-- Items without submenu -->
+              <ng-container *ngIf="!item.hasSubmenu">
+                <a class="nav-link" 
+                   [routerLink]="item.link" 
+                   [queryParams]="item.query || {}"
+                   routerLinkActive="active"
+                   (click)="closeSidebar()">
+                  <div class="nav-icon">
+                    <i class="align-middle" [attr.data-feather]="item?.icon"></i>
+                  </div>
+                  <span class="nav-text">{{ item.title }}</span>
+                  <div class="nav-indicator"></div>
+                </a>
+              </ng-container>
+
+              <!-- Items with submenu (like Reports) -->
+              <ng-container *ngIf="item.hasSubmenu">
+                <a class="nav-link submenu-toggle" 
+                   (click)="sideBarService.toggleSubMenu(i)"
+                   [class.active]="sideBarService.activeSubMenuIndex === i">
+                  <div class="nav-icon">
+                    <i class="align-middle" [attr.data-feather]="item?.icon"></i>
+                  </div>
+                  <span class="nav-text">{{ item.title }}</span>
+                  <div class="nav-arrow">
+                    <i class="align-middle" 
+                       [attr.data-feather]="sideBarService.activeSubMenuIndex === i ? 'chevron-up' : 'chevron-down'"></i>
+                  </div>
+                </a>
+                
+                <!-- Submenu items -->
+                <ul class="submenu-list" 
+                    [class.show]="sideBarService.activeSubMenuIndex === i">
+                  <li class="submenu-item" 
+                      *ngFor="let subItem of item.menu">
+                    <a class="submenu-link" 
+                       [routerLink]="subItem.link" 
+                       [queryParams]="subItem.query || {}"
+                       routerLinkActive="active"
+                       (click)="closeSidebar()">
+                      <div class="submenu-icon">
+                        <i class="align-middle" [attr.data-feather]="subItem?.icon"></i>
+                      </div>
+                      <span class="submenu-text">{{ subItem.title }}</span>
+                    </a>
+                  </li>
+                </ul>
+              </ng-container>
+            </li>
+          </ng-container>
+        </ul>
+      </div>
+
+      <!-- Extra Section -->
+      <div class="nav-section extra-section">
+        <div class="section-header">
+          <span class="section-title">Settings</span>
+        </div>
+        
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a class="nav-link logout-link" (click)="logout()">
+              <div class="nav-icon">
+                <i class="align-middle" data-feather="log-out"></i>
+              </div>
+              <span class="nav-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
