@@ -171,11 +171,11 @@ export class SideBarService {
           link: 'suggestions',
           icon: 'lightbulb',
         },
-        {
-          title: 'Contact Us',
-          link: 'contactUs',
-          icon: 'envelope',
-        },
+        // {
+        //   title: 'Contact Us',
+        //   link: 'contactUs',
+        //   icon: 'envelope',
+        // },
       ],
     },
   ];
