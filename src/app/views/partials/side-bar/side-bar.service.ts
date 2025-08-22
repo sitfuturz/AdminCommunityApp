@@ -176,6 +176,16 @@ export class SideBarService {
           link: 'contactUs',
           icon: 'envelope',
         },
+        {
+          title: 'Jobs',
+          link: 'jobs',
+          icon: 'briefcase',
+        },
+        {
+          title: 'Matrimony',
+          link: 'matrimony',
+          icon: 'marriage',
+        },
       ],
     },
   ];

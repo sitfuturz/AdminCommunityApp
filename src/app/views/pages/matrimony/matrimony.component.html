@@ -1,0 +1,378 @@
+<div class="container-fluid">
+  <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+    <div class="card-header bg-gradient-primary d-flex justify-content-between align-items-center py-3">
+      <h4 class="mb-0 fw-bold text-white">
+        <i class="bi bi-heart me-2"></i>Matrimony Profiles Management
+      </h4>
+    </div>
+    <div class="card-body p-0">
+      <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+        <div class="d-flex w-100 align-items-center">
+          <div class="flex-grow-1 me-2">
+            <input type="text" class="form-control"
+              placeholder="Search profiles by name, caste, occupation, marital status" [(ngModel)]="payload.search"
+              (input)="onSearch()">
+          </div>
+          <div>
+            <ng-select [items]="status" (change)="onChange()" bindLabel="label" bindValue="id" [(ngModel)]="payload.isActive"
+              placeholder="Filter by status" class="me-2">
+              </ng-select>
+          </div>
+          <div>
+            <ng-select [items]="[10,25,50,100]" (change)="onChange()" [(ngModel)]="payload.limit"
+              placeholder="Items per page"></ng-select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="text-center my-5 py-5">
+      <div class="spinner-grow text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading && profiles.docs && profiles.docs.length > 0">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th class="ps-4 py-3">Profile</th>
+            <th class="py-3">Personal Details</th>
+            <th class="py-3">Location & Occupation</th>
+            <th class="py-3">Status</th>
+            <th class="py-3">Created</th>
+            <th class="text-end pe-4 py-3">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let profile of profiles.docs | paginate: {itemsPerPage: payload.limit, currentPage: payload.page, totalItems: profiles.totalDocs}; let i=index"
+            class="border-bottom">
+            <td class="ps-4 py-3">
+              <div class="d-flex align-items-center">
+                <div class="profile-image-container me-3 position-relative" style="cursor: pointer;"
+                  (click)="openProfileDetail(profile._id)">
+                  <img *ngIf="hasProfileImage(profile)" [src]="getProfileImage(profile)" alt="Profile Image"
+                    class="profile-thumbnail rounded-circle shadow-sm"
+                    style="width: 60px; height: 60px; object-fit: cover;">
+                  <div *ngIf="!hasProfileImage(profile)"
+                    class="bg-gradient-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                    style="width: 60px; height: 60px; color: white;">
+                    <i class="bi bi-person-fill fs-4"></i>
+                  </div>
+                  <div class="position-absolute bottom-0 end-0 bg-dark bg-opacity-75 rounded-circle p-1"
+                    style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-eye text-white" style="font-size: 10px;"></i>
+                  </div>
+                </div>
+                <div>
+                  <div class="fw-bold text-dark">{{profile.name || 'N/A'}}</div>
+                  <span class="badge rounded-pill me-1" [ngClass]="getGenderBadgeClass(profile.gender)"
+                    style="font-size: 0.7rem;">
+                    {{profile.gender | titlecase}}
+                  </span>
+                </div>
+              </div>
+            </td>
+            <td class="py-3">
+              <div>
+                <div class="fw-bold text-dark">{{profile.religion || 'N/A'}}</div>
+                <small class="text-muted d-block" *ngIf="profile.caste">{{profile.caste}}</small>
+                <span class="badge rounded-pill mt-1" [ngClass]="getMaritalStatusBadgeClass(profile.maritalStatus)"
+                  style="font-size: 0.7rem;">
+                  {{profile.maritalStatus | titlecase}}
+                </span>
+                <small class="text-muted d-block" *ngIf="profile.height">Height: {{profile.height}}</small>
+              </div>
+            </td>
+            <td class="py-3">
+              <div>
+                <div class="fw-bold text-dark" *ngIf="profile.location?.city">{{profile.location.city}}</div>
+                <small class="text-muted d-block" *ngIf="profile.occupation">{{profile.occupation}}</small>
+              </div>
+            </td>
+            <td class="py-3">
+              <div>
+                <span class="badge rounded-pill  {{profile.isActive ? 'bg-success' : 'bg-danger'}}  me-1 cursor-pointer" style="font-size: 0.7rem;" (click)="deactivateProfile(profile)">
+                  {{profile.isActive ? 'Active' : 'Inactive'}}
+                </span>
+              </div>
+            </td>
+            <td class="py-3">
+              <small class="text-muted">{{formatDate(profile.createdAt)}}</small>
+            </td>
+            <td class="text-end pe-4 py-3">
+              <a class="dropdown-item" (click)="openProfileDetail(profile._id)" style="cursor: pointer;">
+                <i class="bi bi-eye-fill me-2 text-primary"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="d-flex justify-content-end p-3">
+        <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
+      </div>
+    </div>
+
+    <div *ngIf="!loading && (!profiles.docs || profiles.docs.length === 0)" class="text-center my-5 py-4 px-4">
+      <div class="empty-state">
+        <i class="bi bi-heart fs-1 text-muted mb-3"></i>
+        <h5>No Profiles Found</h5>
+        <p class="text-muted">No matrimony profiles available at the moment.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Detail Modal -->
+<div class="modal fade" id="profileDetailModal" tabindex="-1" role="dialog" aria-labelledby="profileDetailModalTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
+      <div class="modal-header bg-light">
+        <h5 class="modal-title" id="profileDetailModalTitle">
+          <i class="bi bi-heart me-2"></i>Matrimony Profile Details
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0" *ngIf="selectedProfile">
+        <div class="row g-0">
+          <div class="col-md-4 bg-light">
+            <div class="p-4 text-center">
+              <div class="profile-image-container mb-3">
+                <img *ngIf="hasProfileImage(selectedProfile)" [src]="getProfileImage(selectedProfile)"
+                  [alt]="selectedProfile.name" class="img-fluid rounded-circle shadow"
+                  style="width: 150px; height: 150px; object-fit: cover;">
+                <div *ngIf="!hasProfileImage(selectedProfile)"
+                  class="bg-gradient-primary rounded-circle d-flex align-items-center justify-content-center shadow mx-auto"
+                  style="width: 150px; height: 150px; color: white;">
+                  <i class="bi bi-person-fill" style="font-size: 4rem;"></i>
+                </div>
+              </div>
+
+              <h4 class="fw-bold text-dark mb-2">{{selectedProfile.name || 'N/A'}}</h4>
+              <p class="text-muted mb-2">{{calculateAge(selectedProfile.dateOfBirth)}} years old</p>
+
+              <div class="d-flex justify-content-center gap-2 mb-3">
+                <span class="badge rounded-pill" [ngClass]="getGenderBadgeClass(selectedProfile.gender)">
+                  {{selectedProfile.gender | titlecase}}
+                </span>
+                <span class="badge rounded-pill" [ngClass]="getMaritalStatusBadgeClass(selectedProfile.maritalStatus)">
+                  {{selectedProfile.maritalStatus | titlecase}}
+                </span>
+              </div>
+
+              <div *ngIf="selectedProfile.bio" class="bg-white p-3 rounded shadow-sm">
+                <h6 class="text-muted mb-2">About</h6>
+                <p class="text-dark small">{{selectedProfile.bio}}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-8">
+            <div class="p-4">
+              <div class="row">
+                <div class="col-md-6 mb-4">
+                  <h6 class="text-primary fw-bold mb-3">
+                    <i class="bi bi-person-circle me-2"></i>Personal Information
+                  </h6>
+                  <div class="info-item mb-2">
+                    <strong>Religion:</strong> {{selectedProfile.religion || 'N/A'}}
+                  </div>
+                  <div class="info-item mb-2">
+                    <strong>Caste:</strong> {{selectedProfile.caste || 'N/A'}}
+                  </div>
+                  <div class="info-item mb-2" *ngIf="selectedProfile.subCaste">
+                    <strong>Sub Caste:</strong> {{selectedProfile.subCaste}}
+                  </div>
+                  <div class="info-item mb-2">
+                    <strong>Mother Tongue:</strong> {{selectedProfile.motherTongue || 'N/A'}}
+                  </div>
+                  <div class="info-item mb-2">
+                    <strong>Height:</strong> {{selectedProfile.height || 'N/A'}}
+                  </div>
+                  <div class="info-item mb-2">
+                    <strong>Diet:</strong> {{selectedProfile.diet || 'N/A'}}
+                  </div>
+                  <div class="info-item mb-2" *ngIf="selectedProfile.mobileNo">
+                    <strong>Mobile:</strong> {{selectedProfile.mobileNo}}
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                  <h6 class="text-primary fw-bold mb-3">
+                    <i class="bi bi-geo-alt me-2"></i>Location & Contact
+                  </h6>
+                  <div class="info-item mb-2" *ngIf="selectedProfile.location?.city">
+                    <strong>City:</strong> {{selectedProfile.location.city}}
+                  </div>
+                  <div class="info-item mb-2" *ngIf="selectedProfile.location?.state">
+                    <strong>State:</strong> {{selectedProfile.location.state}}
+                  </div>
+                  <div class="info-item mb-2" *ngIf="selectedProfile.location?.country">
+                    <strong>Country:</strong> {{selectedProfile.location.country}}
+                  </div>
+                  <div class="info-item mb-2" *ngIf="selectedProfile.location?.address">
+                    <strong>Address:</strong> {{selectedProfile.location.address}}
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                  <h6 class="text-primary fw-bold mb-3">
+                    <i class="bi bi-mortarboard me-2"></i>Education & Career
+                  </h6>
+                  <div class="info-item mb-2">
+                    <strong>Education:</strong> {{selectedProfile.education || 'N/A'}}
+                  </div>
+                  <div class="info-item mb-2" *ngIf="selectedProfile.educationDetails">
+                    <strong>Details:</strong> {{selectedProfile.educationDetails}}
+                  </div>
+                  <div class="info-item mb-2">
+                    <strong>Occupation:</strong> {{selectedProfile.occupation || 'N/A'}}
+                  </div>
+                  <div class="info-item mb-2" *ngIf="selectedProfile.workAs">
+                    <strong>Works As:</strong> {{selectedProfile.workAs}}
+                  </div>
+                  <div class="info-item mb-2" *ngIf="selectedProfile.workDetails">
+                    <strong>Work Details:</strong> {{selectedProfile.workDetails}}
+                  </div>
+                  <div class="info-item mb-2">
+                    <strong>Annual Income:</strong> ₹{{selectedProfile.annualIncome || 'N/A'}}
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                  <h6 class="text-primary fw-bold mb-3">
+                    <i class="bi bi-house me-2"></i>Family Details
+                  </h6>
+                  <div class="info-item mb-2" *ngIf="selectedProfile.familyDetails?.familyType">
+                    <strong>Family Type:</strong> {{selectedProfile.familyDetails.familyType}}
+                  </div>
+                  <div class="info-item mb-2" *ngIf="selectedProfile.familyDetails?.familyStatus">
+                    <strong>Family Status:</strong> {{selectedProfile.familyDetails.familyStatus}}
+                  </div>
+                  <div class="info-item mb-2" *ngIf="selectedProfile.familyDetails?.fatherOccupation">
+                    <strong>Father's Occupation:</strong> {{selectedProfile.familyDetails.fatherOccupation}}
+                  </div>
+                  <div class="info-item mb-2" *ngIf="selectedProfile.familyDetails?.motherOccupation">
+                    <strong>Mother's Occupation:</strong> {{selectedProfile.familyDetails.motherOccupation}}
+                  </div>
+                  <div class="info-item mb-2">
+                    <strong>Profile For:</strong> {{selectedProfile.profileFor || 'N/A'}}
+                  </div>
+                </div>
+
+                <div class="col-12" *ngIf="selectedProfile.partnerPreferences">
+                  <h6 class="text-primary fw-bold mb-3">
+                    <i class="bi bi-heart-half me-2"></i>Partner Preferences
+                  </h6>
+                  <div class="bg-light p-3 rounded">
+                    <div class="row">
+                      <div class="col-md-6" *ngIf="selectedProfile.partnerPreferences.ageRange">
+                        <div class="info-item mb-2">
+                          <strong>Age Range:</strong>
+                          {{selectedProfile.partnerPreferences.ageRange.min || 'N/A'}} -
+                          {{selectedProfile.partnerPreferences.ageRange.max || 'N/A'}} years
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="selectedProfile.partnerPreferences.heightRange">
+                        <div class="info-item mb-2">
+                          <strong>Height Range:</strong>
+                          {{selectedProfile.partnerPreferences.heightRange.min || 'N/A'}} -
+                          {{selectedProfile.partnerPreferences.heightRange.max || 'N/A'}}
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="selectedProfile.partnerPreferences.religion?.length">
+                        <div class="info-item mb-2">
+                          <strong>Religion:</strong>
+                          <span *ngFor="let rel of selectedProfile.partnerPreferences.religion; let last = last">
+                            {{rel}}<span *ngIf="!last">, </span>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="selectedProfile.partnerPreferences.caste?.length">
+                        <div class="info-item mb-2">
+                          <strong>Caste:</strong>
+                          <span *ngFor="let caste of selectedProfile.partnerPreferences.caste; let last = last">
+                            {{caste}}<span *ngIf="!last">, </span>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="selectedProfile.partnerPreferences.education?.length">
+                        <div class="info-item mb-2">
+                          <strong>Education:</strong>
+                          <span *ngFor="let edu of selectedProfile.partnerPreferences.education; let last = last">
+                            {{edu}}<span *ngIf="!last">, </span>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="selectedProfile.partnerPreferences.occupation?.length">
+                        <div class="info-item mb-2">
+                          <strong>Occupation:</strong>
+                          <span *ngFor="let occ of selectedProfile.partnerPreferences.occupation; let last = last">
+                            {{occ}}<span *ngIf="!last">, </span>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="selectedProfile.partnerPreferences.maritalStatus?.length">
+                        <div class="info-item mb-2">
+                          <strong>Marital Status:</strong>
+                          <span
+                            *ngFor="let status of selectedProfile.partnerPreferences.maritalStatus; let last = last">
+                            {{status}}<span *ngIf="!last">, </span>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="selectedProfile.partnerPreferences.diet?.length">
+                        <div class="info-item mb-2">
+                          <strong>Diet:</strong>
+                          <span *ngFor="let dietPref of selectedProfile.partnerPreferences.diet; let last = last">
+                            {{dietPref}}<span *ngIf="!last">, </span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 mt-3">
+                  <h6 class="text-primary fw-bold mb-3">
+                    <i class="bi bi-info-circle me-2"></i>Profile Status
+                  </h6>
+                  <div class="d-flex gap-2">
+                    <span class="badge bg-success" *ngIf="selectedProfile.isActive">Active Profile</span>
+                    <span class="badge bg-danger" *ngIf="!selectedProfile.isActive">Inactive Profile</span>
+                    <span class="badge bg-success" *ngIf="selectedProfile.isProfileComplete">Complete Profile</span>
+                    <span class="badge bg-warning" *ngIf="!selectedProfile.isProfileComplete">Incomplete Profile</span>
+                  </div>
+                  <div class="mt-2">
+                    <small class="text-muted">
+                      <strong>Created:</strong> {{formatDate(selectedProfile.createdAt)}} |
+                      <strong>Updated:</strong> {{formatDate(selectedProfile.updatedAt)}}
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer bg-light">
+        <!-- <button type="button" class="btn btn-outline-primary rounded-pill me-2" 
+                *ngIf="selectedProfile"
+                (click)="openUpdateStatusModal(selectedProfile)">
+          <i class="bi bi-pencil-fill me-1"></i>Update Status
+        </button> -->
+        <button type="button" class="btn btn-outline-danger rounded-pill me-2" *ngIf="selectedProfile"
+          (click)="deactivateProfile(selectedProfile._id)" data-bs-dismiss="modal">
+          <i class="bi bi-trash-fill me-1"></i>Deactivate Profile
+        </button>
+        <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-1"></i>Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -18,77 +18,75 @@ import { CitiesComponent } from './views/pages/city/city.component';
 import { LeaderboardComponent } from './views/pages/leaderboard/leaderboard.component';
 import { ReferralsComponent } from './views/pages/referralReport/referralReport.component';
 import { TestimonialsComponent } from './views/pages/testimonialReport/testimonialReport.component';
-import { ReferralsComponentRecieved} from './views/pages/referralReportRecieved/referralReportRecieved.component';
+import { ReferralsComponentRecieved } from './views/pages/referralReportRecieved/referralReportRecieved.component';
 import { OneToOneComponent } from './views/pages/oneToone/oneToone.component';
 import { TyfcbComponent } from './views/pages/tyfcb/tyfcb.component';
 import { VisitorsComponent } from './views/pages/visitors/visitors.component';
 import { AttendanceDataComponent } from './views/pages/attendenceRecord/attendenceRecord.component';
-import {RegisterComponent} from './views/pages/userRegisteration/userRegisteration.component';
+import { RegisterComponent } from './views/pages/userRegisteration/userRegisteration.component';
 import { PointsHistoryComponent } from './views/pages/pointHistory/pointhistory.component';
-import{AdminLoginComponent} from './views/pages/login/login.component';
+import { AdminLoginComponent } from './views/pages/login/login.component';
 import { SubCategoriesComponent } from './views/pages/subcategory/subcategory.component';
 import { ParticipationComponent } from './views/pages/participation/participation.component';
 import { ImportUsersComponent } from './views/pages/importUser/import-users.component';
-import {FeesComponent} from './views/pages/feesRecord/fees.component';
+import { FeesComponent } from './views/pages/feesRecord/fees.component';
 import { BadgesComponent } from './views/pages/badges/badges.component';
-import {BadgeManagementComponent} from './views/pages/usersbadge/usersbadge.component';
+import { BadgeManagementComponent } from './views/pages/usersbadge/usersbadge.component';
 import { AskManagementComponent } from './views/pages/ask/ask.component';
 import { ComplaintsComponent } from './views/pages/complaints/complaints.component';
 import { SuggestionsComponent } from './views/pages/suggestion/suggestion.component';
+import { JobsComponent } from './views/pages/jobs/jobs.component';
+import { MatrimonyComponent } from './views/pages/matrimony/matrimony.component';
 
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'adminLogin' },
   { path: 'adminLogin', component: AdminLoginComponent },
-  
+
   {
     path: '',
     component: HomeLayoutComponent,
     children: [
-    
- 
-    
       { path: 'users', component: UsersComponent },
-      {path: 'importUsers', component: ImportUsersComponent},
+      { path: 'importUsers', component: ImportUsersComponent },
       { path: 'country', component: CountriesComponent },
       { path: 'states', component: StatesComponent },
       { path: 'dashboard', component: DashboardComponent },
-      {path: 'suggestions', component: SuggestionsComponent},
-      { path: 'events', component:  EventsComponent },
-      { path: 'attendence', component:   AttendanceComponent },
-      { path: 'chapter', component:   ChaptersComponent },
-      { path: 'category', component:   CategoriesComponent},
-      {path: 'subcategory', component: SubCategoriesComponent},
-      {path: 'complaints', component: ComplaintsComponent },
-      {path: 'contactUs', component: ContactUsComponent},
-     
-      { path: 'city', component:    CitiesComponent},
-      { path: 'leaderboard', component:    LeaderboardComponent},
-      { path: 'referralReport', component:    ReferralsComponent},
-      { path: 'testimonialReport', component: TestimonialsComponent},
-      { path: 'referralReportRecieved', component: ReferralsComponentRecieved},
-      { path: 'oneTooneReport', component:OneToOneComponent},
-      { path: 'tyfcb', component:TyfcbComponent},
-      { path: 'VisitorsReport', component: VisitorsComponent},
-     
-      {path: 'attendanceRecord', component: AttendanceDataComponent },
-      {path: 'registerComponent', component: RegisterComponent},
-      {path: 'pointHistory', component: PointsHistoryComponent },
-      {path: 'adminLogin', component: AdminLoginComponent},
-      {path: 'participation', component: ParticipationComponent}, 
+      { path: 'suggestions', component: SuggestionsComponent },
+      { path: 'events', component: EventsComponent },
+      { path: 'attendence', component: AttendanceComponent },
+      { path: 'chapter', component: ChaptersComponent },
+      { path: 'category', component: CategoriesComponent },
+      { path: 'subcategory', component: SubCategoriesComponent },
+      { path: 'complaints', component: ComplaintsComponent },
+      { path: 'contactUs', component: ContactUsComponent },
+
+      { path: 'city', component: CitiesComponent },
+      { path: 'leaderboard', component: LeaderboardComponent },
+      { path: 'referralReport', component: ReferralsComponent },
+      { path: 'testimonialReport', component: TestimonialsComponent },
+      { path: 'referralReportRecieved', component: ReferralsComponentRecieved },
+      { path: 'oneTooneReport', component: OneToOneComponent },
+      { path: 'tyfcb', component: TyfcbComponent },
+      { path: 'VisitorsReport', component: VisitorsComponent },
+
+      { path: 'attendanceRecord', component: AttendanceDataComponent },
+      { path: 'registerComponent', component: RegisterComponent },
+      { path: 'pointHistory', component: PointsHistoryComponent },
+      { path: 'adminLogin', component: AdminLoginComponent },
+      { path: 'participation', component: ParticipationComponent },
       {
-        path: 'banners',component: BannersComponent
+        path: 'banners', component: BannersComponent
       },
-      {path: 'fees', component: FeesComponent},
-      {path: 'badges', component: BadgesComponent},
+      { path: 'fees', component: FeesComponent },
+      { path: 'badges', component: BadgesComponent },
       {
         path: 'badgeManagement', component: BadgeManagementComponent,
-        
+
       },
-    {path: 'askManagement', component: AskManagementComponent},
-      
-      
-      
+      { path: 'askManagement', component: AskManagementComponent },
+      { path: 'jobs', component: JobsComponent },
+      { path: 'matrimony', component: MatrimonyComponent },
     ],
   },
 ];
