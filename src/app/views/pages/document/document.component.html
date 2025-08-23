@@ -11,8 +11,8 @@
             <div class="flex-grow-1 me-2">
               <input type="text" class="form-control"
                     placeholder="Search documents by title or description"
-                    [(ngModel)]="searchQuery"
-                    (input)="onSearch()">
+                    [(ngModel)]="payload.search"
+                    (input)="onChange()">
             </div>
             <div>
               <ng-select [items]="[10,25,50,100]" (change)="onChange()" [(ngModel)]="payload.limit" placeholder="Items per page"></ng-select>
