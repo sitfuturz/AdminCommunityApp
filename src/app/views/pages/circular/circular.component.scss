@@ -1,0 +1,36 @@
+.card {
+  .bg-gradient-primary {
+    background: linear-gradient(90deg, #007bff, #0056b3);
+  }
+
+  .table {
+    th {
+      font-weight: 600;
+      color: #4a4a4a;
+    }
+
+    td {
+      vertical-align: middle;
+    }
+  }
+
+  .badge {
+    padding: 0.5em 1em;
+    font-size: 0.85em;
+  }
+
+  .empty-state {
+    i {
+      font-size: 3rem;
+    }
+
+    h5 {
+      color: #4a4a4a;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #6c757d;
+    }
+  }
+}

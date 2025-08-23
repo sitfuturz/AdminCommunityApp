@@ -47,7 +47,7 @@ interface JobResponse {
   styleUrl: './jobs.component.scss'
 })
 export class JobsComponent {
-   jobs: JobResponse = {
+    jobs: JobResponse = {
     docs: [],
     totalDocs: 0,
     limit: 10,
@@ -59,14 +59,14 @@ export class JobsComponent {
     prevPage: null,
     nextPage: null
   };
-  
+
   loading: boolean = false;
   status: { id: boolean | undefined; label: string }[] = [
     { id: undefined, label: 'All Statuses' },
     { id: true, label: 'Active' },
     { id: false, label: 'Inactive' }
   ];
-  
+
   payload = {
     search: '',
     page: 1,
@@ -75,8 +75,9 @@ export class JobsComponent {
   };
 
   private searchSubject = new Subject<string>();
-  pdfUrl: SafeResourceUrl | string = '';
-  pdfPreviewModal: any;
+  showJobDescriptionPreview: boolean = false;
+  previewUrl: SafeResourceUrl | null = null;
+  previewFileName: string = '';
 
   constructor(
     private jobService: JobService,
@@ -94,38 +95,8 @@ export class JobsComponent {
     this.fetchJobs();
   }
 
-  ngAfterViewInit(): void {
-    const modalElement = document.getElementById('pdfPreviewModal');
-    if (modalElement) {
-      this.pdfPreviewModal = new bootstrap.Modal(modalElement);
-    }
-  }
-
-  openPdfPreview(pdfUrl: string): void {
-    console.log("pdfUrl", pdfUrl);
-    if (pdfUrl) {
-      this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(environment.imageUrl + pdfUrl);
-      console.log("this.pdfUrl", this.pdfUrl);
-      if (this.pdfPreviewModal) {
-        this.pdfPreviewModal.show();
-      }
-      this.cdr.detectChanges(); // Ensure UI updates
-    } else {
-      swalHelper.showToast('No PDF available for preview', 'warning');
-    }
-  }
-
-  closePdfPreview(): void {
-    if (this.pdfPreviewModal) {
-      this.pdfPreviewModal.hide();
-    }
-    this.pdfUrl = '';
-    this.cdr.detectChanges(); // Ensure UI updates
-  }
-
   async fetchJobs(): Promise<void> {
     this.loading = true;
-    
     try {
       const requestData = {
         page: this.payload.page,
@@ -133,7 +104,6 @@ export class JobsComponent {
         search: this.payload.search,
         isActive: this.payload.isActive
       };
-      
       const response = await this.jobService.getAllJobs(requestData);
       this.jobs = response;
       this.cdr.detectChanges();
@@ -152,11 +122,9 @@ export class JobsComponent {
         'Are you sure you want to deactivate this job?',
         'warning'
       );
-      
       if (confirmed) {
         this.loading = true;
         const response = await this.jobService.deactivateJob({ _id: job._id, isActive: !job.isActive });
-        
         if (response) {
           swalHelper.showToast('Job deactivated successfully', 'success');
           this.fetchJobs();
@@ -172,11 +140,31 @@ export class JobsComponent {
     }
   }
 
+  previewJobDescription(job: any): void {
+    if (job.jobDescription) {
+      this.previewFileName = `${job.title || 'Job'}_Description.pdf`;
+      this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(environment.imageUrl + job.jobDescription);
+      this.showJobDescriptionPreview = true;
+      document.body.style.overflow = 'hidden';
+      this.cdr.detectChanges();
+    } else {
+      swalHelper.showToast('No job description available for preview', 'warning');
+    }
+  }
+
+  closeJobDescriptionPreview(): void {
+    this.showJobDescriptionPreview = false;
+    this.previewUrl = null;
+    this.previewFileName = '';
+    document.body.style.overflow = 'auto';
+    this.cdr.detectChanges();
+  }
+
   onSearch(): void {
     this.payload.page = 1;
     this.searchSubject.next(this.payload.search);
   }
-  
+
   onChange(): void {
     this.payload.page = 1;
     this.fetchJobs();

@@ -179,7 +179,7 @@ export class ChaptersComponent implements OnInit, AfterViewInit {
       city_id: cityId,
       city_name: chapter.city_name || '',
       registration_fee: chapter.fees?.registration_fee || 0,
-      renewal_fee: chapter.fees?.renewal_fee || 0,
+      renewal_fee: chapter.fees.renewal_fee || 0,
       membership_duration_days: chapter.fees?.membership_duration_days || 365,
       status: chapter.status,
     };
@@ -287,7 +287,7 @@ export class ChaptersComponent implements OnInit, AfterViewInit {
         status: updatedStatus,
         fees: {
           registration_fee: chapter.fees?.registration_fee || 0,
-          renewal_fee: chapter.fees?.renewal_fee || 0,
+          renewal_fee: chapter.fees.renewal_fee || 0,
           membership_duration_days: chapter.fees?.membership_duration_days || 365,
         },
       });

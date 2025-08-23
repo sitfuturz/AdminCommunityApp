@@ -1,0 +1,86 @@
+<div class="container-fluid">
+  <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+    <div class="card-header bg-gradient-primary d-flex justify-content-between align-items-center py-3">
+      <h4 class="mb-0 fw-bold text-white">
+        <i class="bi bi-file-earmark-text me-2"></i>Circular Management
+      </h4>
+    </div>
+    <div class="card-body p-0">
+      <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+        <div class="d-flex w-100 align-items-center">
+          <div class="flex-grow-1 me-2">
+            <input type="text" class="form-control" placeholder="Search circulars by title or description"
+              [(ngModel)]="searchQuery" (input)="onSearch()">
+          </div>
+          <div>
+            <ng-select [items]="[10,25,50,100]" (change)="onChange()" [(ngModel)]="payload.limit"
+              placeholder="Items per page"></ng-select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="text-center my-5 py-5">
+      <div class="spinner-grow text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading && circulars.docs && circulars.docs.length > 0">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th class="ps-4 py-3" [width]="'20%'">Title</th>
+            <th class="py-3">Description</th>
+            <th class="py-3" [width]="'10%'">Status</th>
+            <th class="py-3" [width]="'10%'">Created At</th>
+            <th class="text-center" [width]="'10%'">Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let circular of circulars.docs | paginate: {itemsPerPage: payload.limit, currentPage: payload.page, totalItems: circulars.totalDocs}; let i=index"
+            class="border-bottom">
+            <td class="ps-4 py-3">
+              <div class="fw-bold text-dark">{{circular.title || 'Untitled'}}</div>
+            </td>
+            <td class="py-3">
+              <div>{{circular.description || 'N/A'}}</div>
+            </td>
+            <td class="py-3">
+              <span class="badge rounded-pill" [ngClass]="getStatusBadgeClass(circular.isActive)"
+                style="cursor: pointer;">
+                {{circular.isActive ? 'Active' : 'Inactive'}}
+              </span>
+            </td>
+            <td class="py-3">
+              {{formatDate(circular.createdAt)}}
+            </td>
+            <td class="text-center">
+              <!-- <a class="me-3" (click)="previewCircular(circular)" *ngIf="circular.fileUrl">
+                <i class="bi bi-downloadme-1 text-primary"></i>
+              </a> -->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="d-flex justify-content-end p-3">
+        <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
+      </div>
+    </div>
+
+    <div *ngIf="!loading && (!circulars.docs || circulars.docs.length === 0)" class="text-center my-5 py-4 px-4">
+      <div class="empty-state">
+        <i class="bi bi-file-earmark-text fs-1 text-muted mb-3"></i>
+        <h5>No Circulars Found</h5>
+        <p class="text-muted">No circulars available at the moment.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Circular Preview Modal -->
+
+</div>
+

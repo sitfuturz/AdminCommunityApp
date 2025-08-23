@@ -147,6 +147,16 @@ class ApiEndpoints {
   //jobs
   public JOB_GET_ALL_JOBS: string = `${this.PATH}/job/getJobs`;
   public JOB_DEACTIVATE_JOB: string = `${this.PATH}/jobPortal/deactivateJob`;
+
+  //discussion
+  public DISCUSSION_GET_ALL_POSTS: string = `${this.PATH}/getAllDiscussionPosts`;
+  public DISCUSSION_DEACTIVATE_POST: string = `${this.PATH}/deactivatePost`;
+
+  //document
+  public DOCUMENT_GET_ALL: string = `${this.PATH}/documents`;
+
+  //circular
+  public CIRCULAR_GET_ALL: string = `${this.PATH}/circulars`;
 }
 
 export let apiEndpoints = new ApiEndpoints();
