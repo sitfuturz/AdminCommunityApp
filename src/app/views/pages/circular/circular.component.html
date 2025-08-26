@@ -49,8 +49,7 @@
               <div>{{circular.description || 'N/A'}}</div>
             </td>
             <td class="py-3">
-              <span class="badge rounded-pill" [ngClass]="getStatusBadgeClass(circular.isActive)"
-                style="cursor: pointer;">
+              <span class="badge rounded-pill" [ngClass]="getStatusBadgeClass(circular.isActive)">
                 {{circular.isActive ? 'Active' : 'Inactive'}}
               </span>
             </td>
