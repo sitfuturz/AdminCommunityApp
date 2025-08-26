@@ -46,6 +46,7 @@ import { SecondhandProductComponent } from './views/pages/secondHandProducts/sec
 import { FamilyHistoryComponent } from './views/pages/familyHistory/familyHistory.component';
 
 import { BloodGroupComponent } from './views/pages/blood-group/blood-group.component';
+import { AnalyticsComponent } from './views/pages/analytics/analytics.component';
 
 
 
@@ -107,7 +108,8 @@ export const routes: Routes = [
       { path: 'document', component: DocumentComponent },
       { path: 'circular', component: CircularComponent },
       { path: 'gallery', component: GalleryComponent },
-      { path: 'blood-group', component: BloodGroupComponent }
+      { path: 'blood-group', component: BloodGroupComponent },
+      {path:'analytics',component:AnalyticsComponent}
     ],
   },
 ];

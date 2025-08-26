@@ -3956,6 +3956,144 @@ export class FamilyHistoryService {
       throw error;
     }
   }}
+
+  export interface AnalyticsData {
+    userMetrics: {
+      newUsers: number;
+      usersByChapter?: {
+        [key: string]: number;
+      };
+      usersByRegion?: {
+        [key: string]: number;
+      };
+    };
+    membershipMetrics: {
+      newApplications: number;
+      applicationsByChapter?: {
+        [key: string]: number;
+      };
+    };
+    engagementMetrics: {
+      newFeeds: number;
+      totalLikes: number;
+      totalComments: number;
+      avgLikesPerFeed: number;
+      avgCommentsPerFeed: number;
+    };
+    businessMetrics: {
+      referralTypes: {
+        inside: number;
+        outside: number;
+      };
+      newReferrals: number;
+      newOneToOneMeetings: number;
+      newTestimonials: number;
+      newTYFCBs: number;
+      totalTYFCBAmount: number;
+      avgTYFCBAmount: number;
+    };
+    askAndLeadMetrics: {
+      newAsks: number;
+      completedAsks: number;
+      newLeads: number;
+      completedLeads: number;
+    };
+    loginMetrics: {
+      loginsByDevice: {
+        android: number;
+        ios: number;
+        web: number;
+        unknown: number;
+      };
+      totalLogins: number;
+      uniqueUsers: number;
+      returningUsers: number;
+      newUsers: number;
+    };
+    visitorMetrics: {
+      visitorStatus: {
+        present: number;
+        absent: number;
+      };
+      visitorPreferences: {
+        interested: number;
+        notInterested: number;
+        maybe: number;
+      };
+      newVisitors: number;
+    };
+    _id: string;
+    date: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  }
+  export interface AnalyticsResponse {
+    success: boolean;
+    message: string;
+    data: AnalyticsData[];
+  }
+  
+  export interface AnalyticsRequest {
+    startDate: string;
+    endDate: string;
+  }
+  
+  @Injectable({
+    providedIn: 'root',
+  })
+  export class AnalyticsService {
+    private headers: any = [];
+  //  private apiUrl = 'http://localhost:3200'; // Update this to match your API URL
+    
+    constructor(private apiManager: ApiManager, private storage: AppStorage) {}
+    
+    private getHeaders = () => {
+      this.headers = [];
+      let token = this.storage.get(common.TOKEN);
+      
+      if (token != null) {
+        this.headers.push({ 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        });
+      } else {
+        this.headers.push({
+          'Content-Type': 'application/json'
+        });
+      }
+    };
+  
+    async getAnalyticsByDateRange(data: any): Promise<any> {
+      try {
+        this.getHeaders();
+        
+       
+       
+        
+        const response = await this.apiManager.request(
+          {
+           
+            method: 'POST',
+            url: apiEndpoints.GET_ANALYTICS_BY_DATE_RANGE ,
+          },
+          data,
+          this.headers
+        );
+
+
+        
+        
+        return response;
+      } catch (error) {
+        
+        // Handle specific error cases
+        
+          
+      }
+    }
+  }
+
     export interface PointsHistory {
       _id: string;
       userId: string;

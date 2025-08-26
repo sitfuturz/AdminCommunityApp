@@ -166,7 +166,7 @@ class ApiEndpoints {
   public TOGGLE_PRODUCT = `${this.PATH}/secondHandMarketPlace/toggleProduct` ;
 
   public TOGGLE_USER_MARKETPLACE_ACCESS = `${this.PATH}/secondHandMarketPlace/toggleUserMarketplaceAccess`
-  
+  public  GET_ANALYTICS_BY_DATE_RANGE= `${this.PATH}/getAnalyticsByDateRange`;
 
 
   //blood group

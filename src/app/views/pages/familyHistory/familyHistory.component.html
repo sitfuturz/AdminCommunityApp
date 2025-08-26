@@ -5,9 +5,9 @@
       <h4 class="mb-0 fw-bold text-white">
         <i class="bi bi-diagram-3 me-2"></i>Family History
       </h4>
-      <div class="badge bg-light text-primary rounded-pill px-3 py-2">
+      <!-- <div class="badge bg-light text-primary rounded-pill px-3 py-2">
         {{familyHistory?.pagination?.totalDocs || 0}} Users
-      </div>
+      </div> -->
     </div>
 
     <!-- Search and Controls -->
@@ -23,14 +23,14 @@
                     (input)="onSearch()">
             </div>
           </div>
-          <div>
+          <!-- <div>
             <ng-select [items]="[5,10,15,25]" 
                       (change)="onChange()" 
                       [(ngModel)]="payload.limit" 
                       placeholder="Items per page"
                       class="custom-select">
             </ng-select>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

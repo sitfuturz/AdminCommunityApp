@@ -207,11 +207,17 @@ export class SideBarService {
           link: 'circular',
           icon: '',
         },
-        // {
-        //   title: 'Family Tree',
-        //   link: 'family-tree',
-        //   icon: '',
-        // },
+        {
+          title: 'Family Tree',
+          link: 'family-tree',
+          icon: '',
+        },
+
+        {
+          title:'Analytics',
+          link:'analytics',
+          icon:'advertisement'
+        },
         {
           title: 'Blood Group',
           link: 'blood-group',

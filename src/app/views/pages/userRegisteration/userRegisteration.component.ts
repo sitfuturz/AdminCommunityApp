@@ -35,7 +35,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     city: '',
     state: '',
     country: '',
-    sponseredBy: '',
+    sponseredBy: null,
     keywords: '',
     induction_date: ''
   };
@@ -379,10 +379,6 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       return false;
     }
 
-    const selectedDate = new Date(induction_date);
-   
-    
-
     this.validationErrors.induction_date = '';
     return true;
   }
@@ -420,8 +416,6 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     }
   }
 
-
-
   onFileChange(event: any): void {
     const file = event.target.files[0];
     if (file) {
@@ -449,12 +443,17 @@ export class RegisterComponent implements OnInit, AfterViewInit {
           // Explicitly format induction_date to YYYY-MM-DD
           const formattedDate = new Date(this.registerForm[key]).toISOString().split('T')[0];
           formData.append(key, formattedDate);
+        } else if (key === 'sponseredBy') {
+          // Only append sponseredBy if it has a valid value (not null or empty)
+          if (this.registerForm[key] && this.registerForm[key] !== 'null' && this.registerForm[key] !== '') {
+            formData.append(key, this.registerForm[key]);
+          }
+          // Do not append sponseredBy if it’s null or empty (backend will use default: null)
         } else {
           // Append all other fields, including empty ones
           formData.append(key, this.registerForm[key] || '');
         }
       });
-
       const response = await this.registerService.registerUser(formData);
       console.log('Register response:', response);
       
@@ -565,14 +564,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       this.validationErrors.induction_date = 'Induction date is required';
       isValid = false;
     } else {
-      const selectedDate = new Date(induction_date);
-      const today = new Date();
-      if (selectedDate > today) {
-        this.validationErrors.induction_date = 'Induction date cannot be in the future';
-        isValid = false;
-      } else {
-        this.validationErrors.induction_date = '';
-      }
+      this.validationErrors.induction_date = '';
     }
 
     return isValid && this.registerForm.meeting_role;
@@ -592,7 +584,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
            this.registerForm.city &&
            this.registerForm.chapter_name &&
            this.registerForm.meeting_role &&
-           induction_date && new Date(induction_date) <= new Date();
+           induction_date;
   }
 
   resetForm(): void {
@@ -607,7 +599,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       city: '',
       state: '',
       country: '',
-      sponseredBy: '',
+      sponseredBy: null,
       keywords: '',
       induction_date: ''
     };
@@ -668,5 +660,3 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     return new Date(dateString).toLocaleDateString();
   }
 }
-
-
