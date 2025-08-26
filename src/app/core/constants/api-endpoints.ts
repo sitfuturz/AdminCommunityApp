@@ -157,6 +157,14 @@ class ApiEndpoints {
 
   //circular
   public CIRCULAR_GET_ALL: string = `${this.PATH}/circulars`;
+
+  //leads
+  public LEADS_GET_ALL: string = `${this.PATH}/get-all-leads`;
+  public LEADS_UPDATE_STATUS: string = `${this.PATH}/update-lead-status`;
+
+  //survey
+  public SURVEY_GET_ALL: string = `${this.PATH}/fetchAdminSurveys`;
+
 }
 
 export let apiEndpoints = new ApiEndpoints();

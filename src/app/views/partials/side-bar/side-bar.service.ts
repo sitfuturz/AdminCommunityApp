@@ -202,8 +202,13 @@ export class SideBarService {
           icon: '',
         },
         {
-          title: 'Gallery',
-          link: 'gallery',
+          title: 'survey',
+          link: 'survey',
+          icon: '',
+        },
+        {
+          title: 'leads',
+          link: 'leads',
           icon: '',
         },
       ],

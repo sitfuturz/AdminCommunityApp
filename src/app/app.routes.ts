@@ -41,6 +41,8 @@ import { DiscussionComponent } from './views/pages/discussion/discussion.compone
 import { CircularComponent } from './views/pages/circular/circular.component';
 import { GalleryComponent } from './views/pages/gallery/gallery.component';
 import { DocumentComponent } from './views/pages/document/document.component';
+import { LeadsComponent } from './views/pages/leads/leads.component';
+import { SurveyComponent } from './views/pages/survey/survey.component';
 
 
 export const routes: Routes = [
@@ -95,6 +97,8 @@ export const routes: Routes = [
       { path: 'document', component: DocumentComponent },
       { path: 'circular', component: CircularComponent },
       { path: 'gallery', component: GalleryComponent },
+      { path: 'survey', component: SurveyComponent },
+      { path: 'leads', component: LeadsComponent },
     ],
   },
 ];
