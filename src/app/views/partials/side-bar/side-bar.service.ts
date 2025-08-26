@@ -182,11 +182,7 @@ export class SideBarService {
           link: 'jobs',
           icon: 'briefcase',
         },
-        {
-          title:'Family History',
-          link:'family',
-          icon:'envelope'
-        },
+       
         {
           title: 'Matrimony',
           link: 'matrimony',
@@ -208,9 +204,9 @@ export class SideBarService {
           icon: '',
         },
         {
-          title: 'Family Tree',
-          link: 'family-tree',
-          icon: '',
+          title:'Family History',
+          link:'family',
+          icon:'envelope'
         },
 
         {
