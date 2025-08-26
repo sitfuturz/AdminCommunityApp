@@ -41,6 +41,7 @@ import { DiscussionComponent } from './views/pages/discussion/discussion.compone
 import { CircularComponent } from './views/pages/circular/circular.component';
 import { GalleryComponent } from './views/pages/gallery/gallery.component';
 import { DocumentComponent } from './views/pages/document/document.component';
+import { BloodGroupComponent } from './views/pages/blood-group/blood-group.component';
 
 
 export const routes: Routes = [
@@ -84,10 +85,7 @@ export const routes: Routes = [
       },
       { path: 'fees', component: FeesComponent },
       { path: 'badges', component: BadgesComponent },
-      {
-        path: 'badgeManagement', component: BadgeManagementComponent,
-
-      },
+      { path: 'badgeManagement', component: BadgeManagementComponent},
       { path: 'askManagement', component: AskManagementComponent },
       { path: 'jobs', component: JobsComponent },
       { path: 'matrimony', component: MatrimonyComponent },
@@ -95,6 +93,7 @@ export const routes: Routes = [
       { path: 'document', component: DocumentComponent },
       { path: 'circular', component: CircularComponent },
       { path: 'gallery', component: GalleryComponent },
+      { path: 'blood-group', component: BloodGroupComponent }
     ],
   },
 ];

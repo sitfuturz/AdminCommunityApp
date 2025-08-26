@@ -395,7 +395,6 @@ export class AuthService {
   async getUsers(data: { page: number; limit: number; search: string; chapter?: string }): Promise<any> {
     try {
       this.getHeaders();
-      console.log("data", data);
       // Create query parameters
       let queryParams = `?page=${data.page}&limit=${data.limit}`;
       if (data.search) {
@@ -405,7 +404,6 @@ export class AuthService {
         queryParams += `&chapter=${encodeURIComponent(data.chapter)}`;
       }
       
-      console.log('Sending Request with params:', queryParams);
       const response = await this.apiManager.request(
         {
           url: apiEndpoints.GET_USERS + queryParams,

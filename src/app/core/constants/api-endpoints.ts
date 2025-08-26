@@ -157,6 +157,10 @@ class ApiEndpoints {
 
   //circular
   public CIRCULAR_GET_ALL: string = `${this.PATH}/circulars`;
+
+
+  //blood group
+  public GET_BLOOD_GROUP_DETAILS: string = `${this.PATH}/get-blood-group-details`;
 }
 
 export let apiEndpoints = new ApiEndpoints();
