@@ -1,0 +1,349 @@
+/* Primary Styles */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+  color: white;
+}
+
+.rounded-4 {
+  border-radius: 0.75rem !important;
+}
+
+/* Family Tree Container */
+.family-tree-container {
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  min-height: 400px;
+}
+
+/* User Node Styles */
+.user-node-container {
+  position: relative;
+  margin-bottom: 3rem;
+}
+
+.main-user-node {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #e3f2fd;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(78, 115, 223, 0.1);
+  transition: all 0.3s ease;
+}
+
+.main-user-node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(78, 115, 223, 0.15);
+  border-color: #4e73df;
+}
+
+.user-avatar {
+  width: 60px;
+  height: 60px;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 3px solid white;
+}
+
+.user-info h5 {
+  color: #2c3e50;
+  font-size: 1.25rem;
+}
+
+.user-details {
+  font-size: 0.9rem;
+}
+
+.trees-count-badge .badge {
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+}
+
+/* Connection Lines */
+.connection-line {
+  width: 3px;
+  height: 40px;
+  background: linear-gradient(180deg, #4e73df, #1cc88a);
+  margin-left: 30px;
+  position: relative;
+  z-index: 1;
+}
+
+.connection-line::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background: #1cc88a;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* Tree Nodes */
+.trees-container {
+  margin-left: 30px;
+  position: relative;
+}
+
+.tree-node {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  z-index: 2;
+}
+
+.vertical-line {
+  position: absolute;
+  left: 1.5px;
+  top: 0;
+  width: 3px;
+  height: calc(100% + 1.5rem);
+  background: linear-gradient(180deg, #1cc88a, #36b9cc);
+  z-index: 1;
+}
+
+.horizontal-connector {
+  width: 30px;
+  height: 3px;
+  background: linear-gradient(90deg, #1cc88a, #36b9cc);
+  margin-right: 1rem;
+  position: relative;
+}
+
+.horizontal-connector::before {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: #36b9cc;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.tree-content {
+  background: white;
+  border: 2px solid #e8f5e8;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  flex: 1;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.tree-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #1cc88a, #36b9cc);
+}
+
+.tree-content:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 20px rgba(28, 200, 138, 0.1);
+  border-color: #1cc88a;
+}
+
+.tree-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #1cc88a, #36b9cc);
+  font-size: 1.2rem;
+  box-shadow: 0 3px 10px rgba(28, 200, 138, 0.2);
+}
+
+.tree-details h6 {
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.tree-meta .badge {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.6rem;
+  font-weight: 600;
+}
+
+/* Empty States */
+.empty-state {
+  padding: 3rem;
+  color: #6c757d;
+}
+
+.empty-trees-state {
+  margin-left: 30px;
+  background: rgba(248, 249, 250, 0.5);
+  border: 2px dashed #dee2e6;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  margin-top: 1rem;
+}
+
+/* Search Input Styles */
+.form-control:focus {
+  border-color: #4e73df;
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.form-control.rounded-pill {
+  border-radius: 2rem !important;
+}
+
+/* Custom Select Styles */
+.custom-select ::ng-deep .ng-select.ng-select-single .ng-select-container {
+  height: 38px;
+  border-radius: 0.375rem;
+  border-color: #d1ecf1;
+}
+
+.custom-select ::ng-deep .ng-select.ng-select-focused .ng-select-container {
+  border-color: #4e73df;
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-user-node {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .user-avatar {
+    margin-bottom: 1rem;
+    margin-right: 0 !important;
+  }
+  
+  .trees-count-badge {
+    margin-top: 1rem;
+  }
+  
+  .connection-line {
+    margin-left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .trees-container {
+    margin-left: 0;
+    padding-left: 1rem;
+  }
+  
+  .horizontal-connector {
+    width: 20px;
+  }
+  
+  .tree-content {
+    margin-left: 1rem;
+  }
+  
+  .empty-trees-state {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .user-node-container {
+    margin-bottom: 2rem;
+  }
+  
+  .main-user-node {
+    padding: 1rem;
+  }
+  
+  .user-avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+  
+  .tree-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+  
+  .tree-content {
+    padding: 0.75rem;
+  }
+}
+
+/* Animation Effects */
+.user-node-container {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.user-node-container:nth-child(1) { animation-delay: 0.1s; }
+.user-node-container:nth-child(2) { animation-delay: 0.2s; }
+.user-node-container:nth-child(3) { animation-delay: 0.3s; }
+.user-node-container:nth-child(4) { animation-delay: 0.4s; }
+.user-node-container:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tree-node {
+  animation: slideInFromLeft 0.5s ease-out forwards;
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.tree-node:nth-child(1) { animation-delay: 0.2s; }
+.tree-node:nth-child(2) { animation-delay: 0.3s; }
+.tree-node:nth-child(3) { animation-delay: 0.4s; }
+.tree-node:nth-child(4) { animation-delay: 0.5s; }
+
+@keyframes slideInFromLeft {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Spinner */
+.spinner-grow {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Pagination */
+::ng-deep .ngx-pagination .current {
+  background: #4e73df;
+  border-color: #4e73df;
+}
+
+::ng-deep .ngx-pagination a:hover {
+  background: #4e73df;
+  border-color: #4e73df;
+  color: white;
+}
+
+/* Scrollbar Styling */
+.family-tree-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.family-tree-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.family-tree-container::-webkit-scrollbar-thumb {
+  background: #4e73df;
+  border-radius: 10px;
+}
+
+.family-tree-container::-webkit-scrollbar-thumb:hover {
+  background: #224abe;
+}

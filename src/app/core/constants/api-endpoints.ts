@@ -157,6 +157,16 @@ class ApiEndpoints {
 
   //circular
   public CIRCULAR_GET_ALL: string = `${this.PATH}/circulars`;
+
+
+  public GET_SECONDHAND_PRODUCTS = `${this.PATH}/secondHandMarketPlace/getProducts`;
+  public GET_ALL_FAMILY_TREES=`${this.PATH1}/mobile/getAllTreesHistoryAdmin`
+
+  public TOGGLE_PRODUCT = `${this.PATH}/secondHandMarketPlace/toggleProduct` ;
+
+  public TOGGLE_USER_MARKETPLACE_ACCESS = `${this.PATH}/secondHandMarketPlace/toggleUserMarketplaceAccess`
+  
+
 }
 
 export let apiEndpoints = new ApiEndpoints();

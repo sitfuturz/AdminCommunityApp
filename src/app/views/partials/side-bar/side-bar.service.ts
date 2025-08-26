@@ -177,9 +177,19 @@ export class SideBarService {
           icon: 'envelope',
         },
         {
+          title:'secondHand Product',
+          link:'secondHand',
+          icon:'envelope'
+        },
+        {
           title: 'Jobs',
           link: 'jobs',
           icon: 'briefcase',
+        },
+        {
+          title:'Family History',
+          link:'family',
+          icon:'envelope'
         },
         {
           title: 'Matrimony',

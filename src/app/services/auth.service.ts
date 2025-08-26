@@ -2750,6 +2750,8 @@ async toggleVisitorAttendance(body: { visitorId: string }): Promise<any> {
   //   }
   // }
 
+
+
   export interface BannerResponse {
     banners: Banner[];
     total: number;
@@ -3114,6 +3116,129 @@ export class ContactUsService {
       throw error;
     }
   }}
+
+  export interface User {
+    _id: string;
+    name: string;
+    mobile_number: string;
+    email: string;
+    profilePic: string;
+  }
+  
+  export interface Product {
+    _id: string;
+    title: string;
+    description: string;
+    price: number;
+    category: string;
+    productImages: string[];
+    userId: User;
+    status: 'available' | 'sold' | 'pending';
+    isDeleted: boolean;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  }
+  
+  export interface ProductResponse {
+    docs: Product[];
+    totalDocs: number;
+    limit: number;
+    page: number;
+    totalPages: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+    prevPage: number | null;
+    nextPage: number | null;
+  }
+  
+  @Injectable({
+    providedIn: 'root',
+  })
+  export class SecondhandProductService {
+    private headers: any = [];
+  
+    constructor(private apiManager: ApiManager, private storage: AppStorage) {}
+  
+    private getHeaders = () => {
+      this.headers = [];
+      let token = this.storage.get(common.TOKEN);
+      
+      if (token != null) {
+        this.headers.push({ Authorization: `Bearer ${token}` });
+      }
+    };
+    async getAllProducts(data: { page: number; limit: number; search: string }): Promise<any> {
+      try {
+        this.getHeaders();
+        
+        const requestData = {
+          page: data.page,
+          limit: data.limit,
+          search: data.search || ''
+        };
+        
+        const response = await this.apiManager.request(
+          {
+            url: apiEndpoints.GET_SECONDHAND_PRODUCTS,
+            method: 'POST',
+          },
+          requestData,
+          this.headers
+        );
+        
+        return response;
+      } catch (error) {
+        console.error('API Error:', error);
+        swalHelper.showToast('Failed to fetch products', 'error');
+        throw error;
+      }
+    }
+    async toggleProduct(data: { _id: string }): Promise<any> {
+      try {
+        this.getHeaders();
+        
+        const response = await this.apiManager.request(
+          {
+            url: apiEndpoints.TOGGLE_PRODUCT,
+            method: 'POST',
+          },
+          data,
+          this.headers
+        );
+        
+        return response;
+      } catch (error) {
+        console.error('Toggle Product Error:', error);
+        swalHelper.showToast('Failed to toggle product status', 'error');
+        throw error;
+      }
+    }
+  
+    async toggleUserMarketplaceAccess(data: { _id: string }): Promise<any> {
+      try {
+        this.getHeaders();
+        
+        const response = await this.apiManager.request(
+          {
+            url: apiEndpoints.TOGGLE_USER_MARKETPLACE_ACCESS,
+            method: 'POST',
+          },
+          data,
+          this.headers
+        );
+        
+        return response;
+      } catch (error) {
+        console.error('Toggle User Access Error:', error);
+        swalHelper.showToast('Failed to toggle user marketplace access', 'error');
+        throw error;
+      }
+    }
+  }
+  
   export interface Event1 {
     _id: string;
     name: string;
@@ -3744,6 +3869,95 @@ export class ParticipationService {
     
     // }
 
+   export interface RootNode {
+  nodeId: string;
+  name: string;
+  relation: string;
+  userId: string | null;
+}
+
+export interface TreeData {
+  treeId: string;
+  rootNode: RootNode;
+}
+
+export interface User {
+  userId: string;
+  name: string;
+  email: string;
+  mobileNo: string;
+}
+
+export interface UserTreeData {
+  user: User;
+  trees: TreeData[];
+}
+
+export interface Pagination {
+  totalDocs: number;
+  totalPages: number;
+  page: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
+export interface FamilyHistoryResponse {
+  users: UserTreeData[];
+  pagination: Pagination;
+}
+
+export interface ApiResponse {
+  message: string;
+  data: FamilyHistoryResponse;
+  status: number;
+  success: boolean;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FamilyHistoryService {
+  private headers: any = [];
+
+  constructor(private apiManager: ApiManager, private storage: AppStorage) {}
+
+  private getHeaders = () => {
+    this.headers = [];
+    let token = this.storage.get(common.TOKEN);
+    
+    if (token != null) {
+      this.headers.push({ Authorization: `Bearer ${token}` });
+    }
+  };
+
+  async getAllFamilyTrees(data: { page: number; limit: number; search: string }): Promise<any> {
+    try {
+      this.getHeaders();
+      
+      let queryParams = `?page=${data.page}&limit=${data.limit}`;
+      if (data.search && data.search.trim() !== '') {
+        queryParams += `&search=${encodeURIComponent(data.search.trim())}`;
+      }
+      
+      // Replace with your actual API endpoint
+      const response = await this.apiManager.request(
+        {
+          url: apiEndpoints.GET_ALL_FAMILY_TREES + queryParams,
+          method: 'GET',
+        },
+        null,
+        this.headers
+      );
+      
+      
+      return response;
+    } catch (error) {
+      console.error('Update Family Tree Error:', error);
+      swalHelper.showToast('Failed to update family tree', 'error');
+      throw error;
+    }
+  }}
     export interface PointsHistory {
       _id: string;
       userId: string;

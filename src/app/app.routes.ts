@@ -41,6 +41,8 @@ import { DiscussionComponent } from './views/pages/discussion/discussion.compone
 import { CircularComponent } from './views/pages/circular/circular.component';
 import { GalleryComponent } from './views/pages/gallery/gallery.component';
 import { DocumentComponent } from './views/pages/document/document.component';
+import { SecondhandProductComponent } from './views/pages/secondHandProducts/secondHand.component';
+import { FamilyHistoryComponent } from './views/pages/familyHistory/familyHistory.component';
 
 
 export const routes: Routes = [
@@ -88,8 +90,10 @@ export const routes: Routes = [
         path: 'badgeManagement', component: BadgeManagementComponent,
 
       },
+      {path:'secondHand',component:SecondhandProductComponent },
       { path: 'askManagement', component: AskManagementComponent },
       { path: 'jobs', component: JobsComponent },
+      {path:'family', component:FamilyHistoryComponent },
       { path: 'matrimony', component: MatrimonyComponent },
       { path: 'discussion', component: DiscussionComponent },
       { path: 'document', component: DocumentComponent },
