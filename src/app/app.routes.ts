@@ -37,6 +37,10 @@ import { ComplaintsComponent } from './views/pages/complaints/complaints.compone
 import { SuggestionsComponent } from './views/pages/suggestion/suggestion.component';
 import { JobsComponent } from './views/pages/jobs/jobs.component';
 import { MatrimonyComponent } from './views/pages/matrimony/matrimony.component';
+import { DiscussionComponent } from './views/pages/discussion/discussion.component';
+import { CircularComponent } from './views/pages/circular/circular.component';
+import { GalleryComponent } from './views/pages/gallery/gallery.component';
+import { DocumentComponent } from './views/pages/document/document.component';
 
 
 export const routes: Routes = [
@@ -87,6 +91,10 @@ export const routes: Routes = [
       { path: 'askManagement', component: AskManagementComponent },
       { path: 'jobs', component: JobsComponent },
       { path: 'matrimony', component: MatrimonyComponent },
+      { path: 'discussion', component: DiscussionComponent },
+      { path: 'document', component: DocumentComponent },
+      { path: 'circular', component: CircularComponent },
+      { path: 'gallery', component: GalleryComponent },
     ],
   },
 ];

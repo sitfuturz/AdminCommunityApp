@@ -11,7 +11,7 @@
           <div class="flex-grow-1 me-2">
             <input type="text" class="form-control"
               placeholder="Search profiles by name, caste, occupation, marital status" [(ngModel)]="payload.search"
-              (input)="onSearch()">
+              (input)="onChange()">
           </div>
           <div>
             <ng-select [items]="status" (change)="onChange()" bindLabel="label" bindValue="id" [(ngModel)]="payload.isActive"

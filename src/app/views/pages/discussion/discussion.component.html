@@ -1,0 +1,148 @@
+<div class="container-fluid py-4">
+  <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+    <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center py-4">
+      <h3 class="mb-0 fw-bold text-white">
+        <i class="bi bi-chat-left-text me-2"></i>Discussion Posts Management
+      </h3>
+    </div>
+    <div class="card-body p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div class="d-flex w-100 align-items-center gap-3">
+          <div class="flex-grow-1">
+            <input type="text" class="form-control form-control-lg" placeholder="Search posts by title or description"
+              [(ngModel)]="payload.search" (input)="onChange()">
+          </div>
+          <div>
+            <ng-select [items]="status" (change)="onChange()" bindLabel="label" bindValue="id"
+              [(ngModel)]="payload.isActive" placeholder="Filter by status" >
+            </ng-select>
+          </div>
+          <div>
+            <ng-select [items]="[10,25,50,100]" (change)="onChange()" [(ngModel)]="payload.limit"
+              placeholder="Items per page" class="custom-ng-select">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="loading" class="text-center my-5 py-5">
+        <div class="spinner-grow text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div class="table-responsive" *ngIf="!loading && posts?.docs && posts?.docs?.length > 0">
+        <table class="table table-striped table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th style="min-width: 200px;">Title</th>
+              <th style="min-width: 300px;">Description</th>
+              <th style="min-width: 120px;">Total Comments</th>
+              <th style="min-width: 100px;">Status</th>
+              <th style="min-width: 120px;">Created</th>
+              <th class="text-center" style="min-width: 100px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="posts">
+            <tr
+              *ngFor="let post of posts.docs | paginate: {itemsPerPage: payload.limit, currentPage: payload.page, totalItems: posts.totalDocs}; let i=index"
+              class="border-bottom" [attr.data-post-id]="post._id" (click)="toggleComments(post._id, $event)">
+              <td class="ps-4 py-3 fs-5">
+                <div class="fw-bold text-dark">{{post.title || 'N/A'}}</div>
+              </td>
+              <td class="py-3 fs-5">
+                <span class="text-muted" [title]="post.description || 'N/A'"
+                  *ngIf="post.description">{{post.description}}</span>
+                <span class="text-muted" *ngIf="!post.description">N/A</span>
+              </td>
+              <td class="py-3 fs-5">
+                <span class="badge bg-info text-white">{{post.totalComments || 0}}</span>
+              </td>
+              <td>
+                <span class="badge {{post.isActive ? 'bg-success' : 'bg-danger'}}">
+                  {{post.isActive ? 'Active' : 'Inactive'}}
+                </span>
+              </td>
+              <td class="py-3 fs-5">
+                <span class="text-muted">{{formatDate(post.createdAt)}}</span>
+              </td>
+              <td class="text-end pe-4 py-3 fs-5 text-center">
+                <i class="bi bi-eye me-1 text-success cursor-pointer" (click)="openCommentsModal(post, $event)"></i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="d-flex justify-content-end p-3">
+          <pagination-controls (pageChange)="onPageChange($event)" class="custom-pagination"></pagination-controls>
+        </div>
+      </div>
+
+      <div *ngIf="!loading && (!posts?.docs || posts?.docs?.length === 0)" class="text-center my-5 py-4 px-4">
+        <div class="empty-state">
+          <i class="bi bi-chat-left-text fs-2 text-muted mb-3"></i>
+          <h4 class="text-muted">No Discussion Posts Found</h4>
+          <p class="text-muted">No discussion posts available at the moment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Comments Modal -->
+<div class="modal fade" id="commentsModal" tabindex="-1" role="dialog" aria-labelledby="commentsModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
+      <div class="modal-header bg-light">
+        <h5 class="modal-title" id="commentsModalTitle">
+          <i class="bi bi-chat-left-text me-2"></i>Comments for "{{selectedPost?.title}}"
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0" *ngIf="selectedPost">
+        <div class="row g-0">
+          <div class="col-md-4 bg-light">
+            <div class="p-4 text-center">
+              <div class="profile-image-container mb-3">
+                <div class="bg-gradient-primary rounded-circle d-flex align-items-center justify-content-center shadow mx-auto"
+                  style="width: 150px; height: 150px; color: white;">
+                  <i class="bi bi-chat-left-text" style="font-size: 4rem;"></i>
+                </div>
+              </div>
+              <h4 class="fw-bold text-dark mb-2">{{selectedPost.title || 'N/A'}}</h4>
+              <p class="text-muted mb-2">Total Comments: {{selectedPost.totalComments || 0}}</p>
+              <div class="d-flex justify-content-center gap-2 mb-3">
+                <span class="badge rounded-pill" [ngClass]="selectedPost.isActive ? 'bg-success' : 'bg-danger'">
+                  {{selectedPost.isActive ? 'Active' : 'Inactive'}}
+                </span>
+              </div>
+              <div class="bg-white p-3 rounded shadow-sm">
+                <h6 class="text-muted mb-2">Description</h6>
+                <p class="text-dark small">{{selectedPost.description || 'N/A'}}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <div class="p-4">
+              <h6 class="text-primary fw-bold mb-3">
+                <i class="bi bi-chat-left-text me-2"></i>Comments ({{selectedPost.comments?.length || 0}})
+              </h6>
+              <div class="list-group">
+                <div *ngFor="let comment of selectedPost.comments" class="list-group-item mb-3 border rounded shadow-sm">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>{{comment.name || 'Anonymous'}}</strong>
+                      <small class="text-muted ms-2">({{formatDate(comment.createdAt)}})</small>
+                    </div>
+                  </div>
+                  <p class="mb-0 mt-2 text-dark">{{comment.comment}}</p>
+                </div>
+                <p *ngIf="selectedPost.comments?.length === 0" class="text-muted">No comments available.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -186,6 +186,26 @@ export class SideBarService {
           link: 'matrimony',
           icon: 'marriage',
         },
+        {
+          title: 'Discussion',
+          link: 'discussion',
+          icon: '',
+        },
+        {
+          title: 'Document',
+          link: 'document',
+          icon: '',
+        },
+        {
+          title: 'Circular',
+          link: 'circular',
+          icon: '',
+        },
+        {
+          title: 'Gallery',
+          link: 'gallery',
+          icon: '',
+        },
       ],
     },
   ];

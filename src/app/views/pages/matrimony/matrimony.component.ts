@@ -197,7 +197,6 @@ export class MatrimonyComponent {
 
   onSearch(): void {
     this.payload.page = 1;
-    this.payload.search = this.searchQuery;
     this.searchSubject.next(this.searchQuery);
   }
   

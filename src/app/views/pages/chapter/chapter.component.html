@@ -72,9 +72,9 @@
               </div>
             </td>
             <td class="py-3">{{ chapter.city_name || 'Not Assigned' }}</td>
-            <td class="py-3">{{ chapter.fees?.registration_fee || 0 }}</td>
-            <td class="py-3">{{ chapter.fees?.renewal_fee || 0 }}</td>
-            <td class="py-3">{{ chapter.fees?.membership_duration_days || 365 }}</td>
+            <td class="py-3">{{ chapter.fees.registration_fee || 0 }}</td>
+            <td class="py-3">{{ chapter.fees.renewal_fee || 0 }}</td>
+            <td class="py-3">{{ chapter.fees.membership_duration_days || 365 }}</td>
             <td class="py-3">
               <span
                 class="badge rounded-pill"
