@@ -170,7 +170,7 @@ class ApiEndpoints {
 
 
   //blood group
-  public GET_BLOOD_GROUP_DETAILS: string = `${this.PATH1}/mobile/get-blood-group-details`;
+  public GET_BLOOD_GROUP_DETAILS: string = `${this.PATH}/get-blood-group-details`;
 
 }
 
