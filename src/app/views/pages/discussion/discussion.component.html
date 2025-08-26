@@ -67,7 +67,7 @@
                 <span class="text-muted">{{formatDate(post.createdAt)}}</span>
               </td>
               <td class="text-end pe-4 py-3 fs-5 text-center">
-                <i class="bi bi-eye me-1 text-success cursor-pointer" (click)="openCommentsModal(post, $event)"></i>
+                <span  class="cursor-pointer" (click)="openCommentsModal(post, $event)"><i class="bi bi-eye-fill me-2 text-primary"></i></span>
               </td>
             </tr>
           </tbody>
@@ -91,54 +91,133 @@
 
 <!-- Comments Modal -->
 <div class="modal fade" id="commentsModal" tabindex="-1" role="dialog" aria-labelledby="commentsModalTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-    <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
-      <div class="modal-header bg-light">
-        <h5 class="modal-title" id="commentsModalTitle">
-          <i class="bi bi-chat-left-text me-2"></i>Comments for "{{selectedPost?.title}}"
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content rounded-4 overflow-hidden border-0 shadow-lg">
+      <div class="modal-header bg-gradient-primary text-white p-4">
+        <div class="d-flex align-items-center w-100">
+          <div class="flex-grow-1">
+            <h5 class="modal-title mb-1 fw-bold" id="commentsModalTitle">
+              <i class="bi bi-chat-square-quote me-2"></i>Post Comments
+            </h5>
+            <p class="mb-0 small opacity-90">{{selectedPost?.title}}</p>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
       </div>
+      
       <div class="modal-body p-0" *ngIf="selectedPost">
         <div class="row g-0">
-          <div class="col-md-4 bg-light">
-            <div class="p-4 text-center">
-              <div class="profile-image-container mb-3">
-                <div class="bg-gradient-primary rounded-circle d-flex align-items-center justify-content-center shadow mx-auto"
-                  style="width: 150px; height: 150px; color: white;">
-                  <i class="bi bi-chat-left-text" style="font-size: 4rem;"></i>
+          <!-- Post Info Sidebar -->
+          <div class="col-lg-5 bg-light">
+            <div class="p-4 h-100 d-flex flex-column">
+              <div class="text-center mb-4">
+                <div class="avatar-container position-relative mx-auto mb-3">
+                  <div class="bg-gradient-primary rounded-circle d-flex align-items-center justify-content-center mx-auto shadow"
+                    style="width: 120px; height: 120px;">
+                    <i class="bi bi-file-post" style="font-size: 3rem;"></i>
+                  </div>
+                  <span class="position-absolute top-0 start-75 translate-middle p-2 bg-success rounded-circle">
+                    <span class="visually-hidden">Active post</span>
+                  </span>
+                </div>
+                
+                <h4 class="fw-bold text-dark mb-2 text-truncate">{{selectedPost.title || 'N/A'}}</h4>
+                
+                <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
+                  <span class="badge rounded-pill px-3 py-2" 
+                        [ngClass]="selectedPost.isActive ? 'bg-success' : 'bg-secondary'">
+                    <i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i>
+                    {{selectedPost.isActive ? 'Active' : 'Inactive'}}
+                  </span>
+                  <span class="badge bg-primary rounded-pill px-3 py-2">
+                    <i class="bi bi-chat me-1"></i>{{selectedPost.totalComments || 0}}
+                  </span>
                 </div>
               </div>
-              <h4 class="fw-bold text-dark mb-2">{{selectedPost.title || 'N/A'}}</h4>
-              <p class="text-muted mb-2">Total Comments: {{selectedPost.totalComments || 0}}</p>
-              <div class="d-flex justify-content-center gap-2 mb-3">
-                <span class="badge rounded-pill" [ngClass]="selectedPost.isActive ? 'bg-success' : 'bg-danger'">
-                  {{selectedPost.isActive ? 'Active' : 'Inactive'}}
-                </span>
+              
+              <div class="bg-white p-3 rounded-3 shadow-sm mb-4 flex-grow-1">
+                <h6 class="text-primary fw-semibold mb-3 d-flex align-items-center">
+                  <i class="bi bi-text-paragraph me-2"></i>Description
+                </h6>
+                <p class="text-dark mb-0" style="line-height: 1.6;">{{selectedPost.description || 'No description available'}}</p>
               </div>
-              <div class="bg-white p-3 rounded shadow-sm">
-                <h6 class="text-muted mb-2">Description</h6>
-                <p class="text-dark small">{{selectedPost.description || 'N/A'}}</p>
-              </div>
+              
+              <!-- <div class="mt-auto pt-3">
+                <div class="d-grid">
+                  <button class="btn btn-outline-primary rounded-pill">
+                    <i class="bi bi-link-45deg me-2"></i>Share Post
+                  </button>
+                </div>
+              </div> -->
             </div>
           </div>
-          <div class="col-md-8">
-            <div class="p-4">
-              <h6 class="text-primary fw-bold mb-3">
-                <i class="bi bi-chat-left-text me-2"></i>Comments ({{selectedPost.comments?.length || 0}})
-              </h6>
-              <div class="list-group">
-                <div *ngFor="let comment of selectedPost.comments" class="list-group-item mb-3 border rounded shadow-sm">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                      <strong>{{comment.name || 'Anonymous'}}</strong>
-                      <small class="text-muted ms-2">({{formatDate(comment.createdAt)}})</small>
+          
+          <!-- Comments Section -->
+          <div class="col-lg-7">
+            <div class="p-4 h-100 d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="text-dark fw-bold mb-0 d-flex align-items-center">
+                  <i class="bi bi-chat-text me-2 text-primary"></i>
+                  Comments <span class="badge bg-light text-dark ms-2">{{selectedPost.comments?.length || 0}}</span>
+                </h6>
+                
+                <!-- <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-secondary rounded-pill dropdown-toggle" type="button" 
+                          data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-filter me-1"></i>Sort
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Newest first</a></li>
+                    <li><a class="dropdown-item" href="#">Oldest first</a></li>
+                  </ul>
+                </div> -->
+              </div>
+              
+              <div class="comments-container flex-grow-1" style="max-height: 400px; overflow-y: auto;">
+                <div *ngFor="let comment of selectedPost.comments" 
+                     class="comment-card bg-white rounded-3 p-3 mb-3 shadow-sm border-start border-4 border-primary">
+                  <div class="d-flex align-items-start">
+                    <div class="user-avatar me-3">
+                      <div class="bg-light rounded-circle d-flex align-items-center justify-content-center"
+                           style="width: 40px; height: 40px;">
+                        <i class="bi bi-person text-muted"></i>
+                      </div>
+                    </div>
+                    
+                    <div class="flex-grow-1">
+                      <div class="d-flex justify-content-between align-items-start mb-2">
+                        <strong class="text-dark">{{comment.name || 'Anonymous'}}</strong>
+                        <small class="text-muted">{{formatDate(comment.createdAt)}}</small>
+                      </div>
+                      <p class="mb-0 text-dark" style="line-height: 1.5;">{{comment.comment}}</p>
+                      
+                      <div class="d-flex gap-2 mt-2">
+                        <button class="btn btn-sm btn-link text-decoration-none p-0 text-muted">
+                          <i class="bi bi-hand-thumbs-up me-1"></i>Like
+                        </button>
+                        <button class="btn btn-sm btn-link text-decoration-none p-0 text-muted">
+                          <i class="bi bi-reply me-1"></i>Reply
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <p class="mb-0 mt-2 text-dark">{{comment.comment}}</p>
                 </div>
-                <p *ngIf="selectedPost.comments?.length === 0" class="text-muted">No comments available.</p>
+                
+                <div *ngIf="selectedPost.comments?.length === 0" class="text-center py-5">
+                  <i class="bi bi-chat-dots display-4 text-muted mb-3 d-block"></i>
+                  <p class="text-muted mb-0">No comments yet. Be the first to comment!</p>
+                </div>
               </div>
+              
+              <!-- <div class="mt-4 pt-3 border-top">
+                <div class="d-flex gap-2">
+                  <input type="text" class="form-control rounded-pill" placeholder="Add a comment...">
+                  <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center" 
+                          style="width: 40px; height: 40px;">
+                    <i class="bi bi-send"></i>
+                  </button>
+                </div>
+              </div> -->
             </div>
           </div>
         </div>

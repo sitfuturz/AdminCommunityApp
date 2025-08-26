@@ -41,8 +41,12 @@ import { DiscussionComponent } from './views/pages/discussion/discussion.compone
 import { CircularComponent } from './views/pages/circular/circular.component';
 import { GalleryComponent } from './views/pages/gallery/gallery.component';
 import { DocumentComponent } from './views/pages/document/document.component';
+<<<<<<< HEAD
 import { SecondhandProductComponent } from './views/pages/secondHandProducts/secondHand.component';
 import { FamilyHistoryComponent } from './views/pages/familyHistory/familyHistory.component';
+=======
+import { BloodGroupComponent } from './views/pages/blood-group/blood-group.component';
+>>>>>>> 3837b85a7f653e81f59498758ad548056ffdaa91
 
 
 export const routes: Routes = [
@@ -86,11 +90,15 @@ export const routes: Routes = [
       },
       { path: 'fees', component: FeesComponent },
       { path: 'badges', component: BadgesComponent },
+<<<<<<< HEAD
       {
         path: 'badgeManagement', component: BadgeManagementComponent,
 
       },
       {path:'secondHand',component:SecondhandProductComponent },
+=======
+      { path: 'badgeManagement', component: BadgeManagementComponent},
+>>>>>>> 3837b85a7f653e81f59498758ad548056ffdaa91
       { path: 'askManagement', component: AskManagementComponent },
       { path: 'jobs', component: JobsComponent },
       {path:'family', component:FamilyHistoryComponent },
@@ -99,6 +107,7 @@ export const routes: Routes = [
       { path: 'document', component: DocumentComponent },
       { path: 'circular', component: CircularComponent },
       { path: 'gallery', component: GalleryComponent },
+      { path: 'blood-group', component: BloodGroupComponent }
     ],
   },
 ];

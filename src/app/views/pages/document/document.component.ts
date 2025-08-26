@@ -90,11 +90,12 @@ export class DocumentComponent {
   previewFileName: string = '';
 
   previewDocument(document: any): void {
+    console.log("Document", environment.imageUrl+document.fileUrl);
     if (document.fileUrl) {
       this.previewFileName = `${document.title || 'Document'}.pdf`;
       this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(environment.imageUrl + document.fileUrl);
       this.showDocumentPreview = true;
-      document.body.style.overflow = 'hidden';
+      // document.body.style.overflow = 'hidden';
       this.cdr.detectChanges();
     } else {
       swalHelper.showToast('No document available for preview', 'warning');

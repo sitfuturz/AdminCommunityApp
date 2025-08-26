@@ -49,8 +49,7 @@
               <div>{{circular.description || 'N/A'}}</div>
             </td>
             <td class="py-3">
-              <span class="badge rounded-pill" [ngClass]="getStatusBadgeClass(circular.isActive)"
-                style="cursor: pointer;">
+              <span class="badge rounded-pill" [ngClass]="getStatusBadgeClass(circular.isActive)">
                 {{circular.isActive ? 'Active' : 'Inactive'}}
               </span>
             </td>
@@ -58,9 +57,9 @@
               {{formatDate(circular.createdAt)}}
             </td>
             <td class="text-center">
-              <!-- <a class="me-3" (click)="previewCircular(circular)" *ngIf="circular.fileUrl">
-                <i class="bi bi-downloadme-1 text-primary"></i>
-              </a> -->
+              <a class="me-3" (click)="previewCircular(circular)" *ngIf="circular.fileUrl">
+                <i class="bi bi-download me-1 text-primary"></i>
+              </a>
             </td>
           </tr>
         </tbody>

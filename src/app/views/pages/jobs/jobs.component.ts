@@ -118,23 +118,23 @@ export class JobsComponent {
   async deactivateJob(job: any): Promise<void> {
     try {
       const confirmed = await swalHelper.confirmation(
-        'Deactivate Job',
-        'Are you sure you want to deactivate this job?',
+        'Update Job Status',
+        'Are you really want to Update Status of this job?',
         'warning'
       );
       if (confirmed) {
         this.loading = true;
         const response = await this.jobService.deactivateJob({ _id: job._id, isActive: !job.isActive });
         if (response) {
-          swalHelper.showToast('Job deactivated successfully', 'success');
+          swalHelper.showToast('Job status updated successfully', 'success');
           this.fetchJobs();
         } else {
-          swalHelper.showToast('Failed to deactivate job', 'error');
+          swalHelper.showToast('Failed to Update Status', 'error');
         }
       }
     } catch (error: any) {
       console.error('Error deactivating job:', error);
-      swalHelper.showToast(error?.response?.data?.message || 'Failed to deactivate job', 'error');
+      swalHelper.showToast(error?.response?.data?.message || 'Failed to Update Status', 'error');
     } finally {
       this.loading = false;
     }

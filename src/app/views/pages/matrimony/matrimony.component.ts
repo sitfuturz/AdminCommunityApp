@@ -171,8 +171,8 @@ export class MatrimonyComponent {
   async deactivateProfile(profile: any): Promise<void> {
     try {
       const confirmed = await swalHelper.confirmation(
-        'Deactivate Profile',
-        'Are you sure you want to deactivate this profile?',
+        'UPdate Status',
+        'Are you really want to update the status?',
         'warning'
       );
       
@@ -181,15 +181,15 @@ export class MatrimonyComponent {
         const response = await this.matrimonyService.deactiveProfile({ _id: profile._id,isActive:!profile.isActive });
         
         if (response) {
-          swalHelper.showToast('Profile deactivated successfully', 'success');
+          swalHelper.showToast('Profile status updated successfully', 'success');
           this.fetchProfiles();
         } else {
-          swalHelper.showToast('Failed to deactivate profile', 'error');
+          swalHelper.showToast('Failed to update status', 'error');
         }
       }
     } catch (error: any) {
       console.error('Error deactivating profile:', error);
-      swalHelper.showToast(error?.response?.data?.message || 'Failed to deactivate profile', 'error');
+      swalHelper.showToast(error?.response?.data?.message || 'Failed to update status', 'error');
     } finally {
       this.loading = false;
     }

@@ -211,9 +211,14 @@ export class SideBarService {
           link: 'circular',
           icon: '',
         },
+        // {
+        //   title: 'Family Tree',
+        //   link: 'family-tree',
+        //   icon: '',
+        // },
         {
-          title: 'Gallery',
-          link: 'gallery',
+          title: 'Blood Group',
+          link: 'blood-group',
           icon: '',
         },
       ],

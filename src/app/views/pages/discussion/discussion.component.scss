@@ -82,3 +82,34 @@
     overflow-x: auto;
   }
 }
+
+ .bg-gradient-primary {
+    background: linear-gradient(90deg, #007bff, #0056b3) !important;
+  }
+  
+  .comment-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .comment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .comments-container::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .comments-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .comments-container::-webkit-scrollbar-thumb {
+    background: #c5c5c5;
+    border-radius: 10px;
+  }
+  
+  .comments-container::-webkit-scrollbar-thumb:hover {
+    background: #a5a5a5;
+  }
