@@ -159,7 +159,7 @@ class ApiEndpoints {
   public CIRCULAR_GET_ALL: string = `${this.PATH}/circulars`;
 
 
-<<<<<<< HEAD
+
   public GET_SECONDHAND_PRODUCTS = `${this.PATH}/secondHandMarketPlace/getProducts`;
   public GET_ALL_FAMILY_TREES=`${this.PATH1}/mobile/getAllTreesHistoryAdmin`
 
@@ -168,10 +168,10 @@ class ApiEndpoints {
   public TOGGLE_USER_MARKETPLACE_ACCESS = `${this.PATH}/secondHandMarketPlace/toggleUserMarketplaceAccess`
   
 
-=======
+
   //blood group
-  public GET_BLOOD_GROUP_DETAILS: string = `${this.PATH}/get-blood-group-details`;
->>>>>>> 3837b85a7f653e81f59498758ad548056ffdaa91
+  public GET_BLOOD_GROUP_DETAILS: string = `${this.PATH1}/mobile/get-blood-group-details`;
+
 }
 
 export let apiEndpoints = new ApiEndpoints();

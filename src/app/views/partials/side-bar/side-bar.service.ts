@@ -171,11 +171,7 @@ export class SideBarService {
           link: 'suggestions',
           icon: 'lightbulb',
         },
-        {
-          title: 'Contact Us',
-          link: 'contactUs',
-          icon: 'envelope',
-        },
+        
         {
           title:'secondHand Product',
           link:'secondHand',
