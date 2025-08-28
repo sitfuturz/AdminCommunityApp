@@ -201,14 +201,14 @@ public TRANSACTION_FETCH_WITH_BALANCE: string = `${this.PATH}/transactions/fetch
   public CASTE_ADD: string = `${this.PATH}/addCaste`;
   public CASTE_DELETE: string = `${this.PATH}/deleteCaste`;
   public CASTE_UPDATE: string = `${this.PATH}/updateCaste`;
+
+  // SubCastes
+public SUBCASTE_GET_ALL: string = `${this.PATH}/fetchAllSubCastes`;
+public SUBCASTE_ADD: string = `${this.PATH}/addSubCaste`;
+public SUBCASTE_DELETE: string = `${this.PATH}/deleteSubCaste`;
+public SUBCASTE_UPDATE: string = `${this.PATH}/updateSubCaste`;
+
 }
 
 export let apiEndpoints = new ApiEndpoints();
-
-// router.post('/transactions/setOpeningBalance', authMiddleware, transcationController.setOpeningBalance);
-// router.post('/transactions/addIncome', authMiddleware, transcationController.addIncome);
-// router.post('/transactions/addExpense', authMiddleware, transcationController.addExpense);
-// router.post('/fetchAdminTransactions', authMiddleware, transcationController.getAdminTransactions);
-// router.post('/transactions/getBalance', authMiddleware, transcationController.getBalance);
-// router.post('/transactions/fetchTransactionsWithBalance', authMiddleware, transcationController.fetchTransactionsWithBalance);
 

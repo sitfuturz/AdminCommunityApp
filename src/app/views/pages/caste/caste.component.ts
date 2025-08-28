@@ -101,7 +101,7 @@ export class CasteComponent {
     try {
       if (this.selectedCaste) {
         // Update
-        await this.casteService.updateCaste(this.selectedCaste._id, { name: this.casteName });
+        await this.casteService.updateCaste({});
         swalHelper.showToast('Caste updated successfully', 'success');
       } else {
         // Add

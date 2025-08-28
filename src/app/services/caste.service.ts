@@ -63,7 +63,7 @@ export class CasteService {
     }
   }
 
-  async addCaste(data: { name: string }): Promise<any> {
+  async addCaste(data: any): Promise<any> {
     try {
       this.getHeaders();
       const response = await this.apiManager.request(
@@ -86,13 +86,13 @@ export class CasteService {
     }
   }
 
-  async updateCaste(id: string, data: { name: string }): Promise<any> {
+  async updateCaste(data: any): Promise<any> {
     try {
       this.getHeaders();
       const response = await this.apiManager.request(
         {
-          url: `${apiEndpoints.CASTE_UPDATE}/${id}`,
-          method: 'PUT',
+          url: `${apiEndpoints.CASTE_UPDATE}/${data._id}`,
+          method: 'POST',
         },
         data,
         this.headers
@@ -109,13 +109,13 @@ export class CasteService {
     }
   }
 
-  async deleteCaste(id: string): Promise<any> {
+  async deleteCaste(data: any): Promise<any> {
     try {
       this.getHeaders();
       const response = await this.apiManager.request(
         {
-          url: `${apiEndpoints.CASTE_DELETE}/${id}`,
-          method: 'DELETE',
+          url: `${apiEndpoints.CASTE_DELETE}/${data._id}`,
+          method: 'POST',
         },
         {},
         this.headers
