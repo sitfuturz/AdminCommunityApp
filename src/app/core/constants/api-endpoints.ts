@@ -178,6 +178,8 @@ class ApiEndpoints {
 
   //survey
   public SURVEY_GET_ALL: string = `${this.PATH}/fetchAdminSurveys`;
+  public SURVEY_CREATE: string = `${this.PATH}/createSurvey`;
+  public SURVEY_GET: string = `${this.PATH}/fetchSurveys`;
 
   //poll
   public POLL_GET_ALL: string = `${this.PATH}/fetchAdminPolls`;

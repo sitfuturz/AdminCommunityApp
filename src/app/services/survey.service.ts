@@ -15,11 +15,14 @@ export interface Survey {
     questionText: string;
     type: 'choice' | 'text' | 'mixed';
     isMultiple: boolean;
-    options: { text: string; count: number; percentage: number }[];
+    options: { text: string; count: number; percentage: number; _id?: string }[];
+    _id?: string;
   }[];
   isActive: boolean;
   expiryDate: string;
   createdAt: string;
+  updatedAt?: string;
+  __v?: number;
 }
 
 export interface SurveyResponse {
@@ -67,6 +70,52 @@ export class SurveyService {
       } else {
         swalHelper.showToast(response.message || 'No surveys found', 'warning');
         throw new Error(response.message || 'No surveys found');
+      }
+    } catch (err) {
+      swalHelper.showToast('Something went wrong!', 'error');
+      throw err;
+    }
+  }
+
+  async createSurvey(data: any): Promise<Survey> {
+    try {
+      this.getHeaders();
+      const response = await this.apiManager.request(
+        {
+          url: apiEndpoints.SURVEY_CREATE,
+          method: 'POST',
+        },
+        data,
+        this.headers
+      );
+      if (response.status === 200 && response.data) {
+        return response.data; // Return the created Survey object
+      } else {
+        swalHelper.showToast(response.message || 'Failed to create survey', 'warning');
+        throw new Error(response.message || 'Failed to create survey');
+      }
+    } catch (err) {
+      swalHelper.showToast('Something went wrong!', 'error');
+      throw err;
+    }
+  }
+
+  async getSingleSurvey(data: any): Promise<Survey> {
+    try {
+      this.getHeaders();
+      const response = await this.apiManager.request(
+        {
+          url: apiEndpoints.SURVEY_GET,
+          method: 'POST',
+        },
+        data,
+        this.headers
+      );
+      if (response.status === 200 && response.data) {
+        return response.data;
+      } else {
+        swalHelper.showToast(response.message || 'No survey found', 'warning');
+        throw new Error(response.message || 'No survey found');
       }
     } catch (err) {
       swalHelper.showToast('Something went wrong!', 'error');

@@ -1,16 +1,15 @@
 <div class="container-fluid">
   <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-    <div
-      class="card-header header-bg d-flex justify-content-between align-items-center py-3"
-    >
+    <div class="card-header header-bg d-flex justify-content-between align-items-center py-3">
       <h4 class="mb-0 fw-bold text-white">
         <i class="bi bi-file-earmark-text me-2"></i>Survey Management
       </h4>
+      <button class="btn btn-light" (click)="openCreateModal()">
+        <i class="bi bi-plus-circle me-2"></i>Create Survey
+      </button>
     </div>
     <div class="card-body p-0">
-      <div
-        class="d-flex justify-content-between align-items-center p-3 border-bottom"
-      >
+      <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
         <div class="d-flex w-100 align-items-center">
           <div class="flex-grow-1 me-2">
             <input
@@ -39,10 +38,7 @@
       </div>
     </div>
 
-    <div
-      *ngIf="!loading && surveys && surveys.docs && surveys.docs.length > 0"
-      class="table-responsive"
-    >
+    <div *ngIf="!loading && surveys && surveys.docs && surveys.docs.length > 0" class="table-responsive">
       <table class="table table-hover align-middle mb-0">
         <thead class="bg-light">
           <tr>
@@ -52,6 +48,7 @@
             <th class="py-3" [width]="'10%'">Status</th>
             <th class="py-3" [width]="'10%'">Expiry Date</th>
             <th class="py-3" [width]="'10%'">Created At</th>
+            <th class="py-3" [width]="'10%'">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -70,7 +67,7 @@
           >
             <td class="ps-4 py-3">
               <div class="fw-bold text-dark">
-                {{ survey.title || "Untitled" }}
+                {{ survey.title || 'Untitled' }}
               </div>
             </td>
             <td class="py-3">
@@ -82,9 +79,7 @@
             <td class="py-3">
               <span
                 class="badge rounded-pill"
-                [ngClass]="
-                  getStatusBadgeClass(survey.expiryDate, survey.isActive)
-                "
+                [ngClass]="getStatusBadgeClass(survey.expiryDate, survey.isActive)"
               >
                 {{ formatExpiryStatus(survey.expiryDate, survey.isActive) }}
               </span>
@@ -95,21 +90,22 @@
             <td class="py-3">
               {{ formatDate(survey.createdAt) }}
             </td>
+            <td class="py-3">
+              <button class="btn btn-sm btn-outline-primary" (click)="openViewModal(survey._id)">
+                <i class="bi bi-eye me-1"></i>Preview
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
 
       <div class="d-flex justify-content-end p-3">
-        <pagination-controls
-          (pageChange)="onPageChange($event)"
-        ></pagination-controls>
+        <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
       </div>
     </div>
 
     <div
-      *ngIf="
-        !loading && (!surveys || !surveys.docs || surveys.docs.length === 0)
-      "
+      *ngIf="!loading && (!surveys || !surveys.docs || surveys.docs.length === 0)"
       class="text-center my-5 py-4 px-4"
     >
       <div class="empty-state">
@@ -119,4 +115,155 @@
       </div>
     </div>
   </div>
+
+  <!-- Create Survey Modal -->
+  <div *ngIf="showCreateModal" class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create New Survey</h5>
+          <button type="button" class="btn-close" (click)="closeCreateModal()"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="createForm">
+            <div class="mb-3">
+              <label for="title" class="form-label">Title</label>
+              <input type="text" class="form-control" id="title" formControlName="title" />
+              <div *ngIf="createForm.get('title')?.invalid && createForm.get('title')?.touched" class="text-danger">
+                Title is required.
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea class="form-control" id="description" formControlName="description"></textarea>
+              <div *ngIf="createForm.get('description')?.invalid && createForm.get('description')?.touched" class="text-danger">
+                Description is required.
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Questions</label>
+              <div formArrayName="questions">
+                <div *ngFor="let question of questions.controls; let i = index" class="mb-4 border p-3 rounded">
+                  <div [formGroupName]="i">
+                    <div class="mb-2">
+                      <label class="form-label">Question {{ i + 1 }}</label>
+                      <input type="text" class="form-control" formControlName="questionText" placeholder="Enter question text" />
+                      <div *ngIf="question.get('questionText')?.invalid && question.get('questionText')?.touched" class="text-danger">
+                        Question text is required.
+                      </div>
+                    </div>
+                    <div class="mb-2">
+                      <label class="form-label">Question Type</label>
+                      <select class="form-control" formControlName="type" (change)="onQuestionTypeChange(i)">
+                        <option value="choice">Multiple Choice</option>
+                        <option value="text">Text Answer</option>
+                        <option value="mixed">Mixed (Choice + Text)</option>
+                      </select>
+                    </div>
+                    <div class="form-check mb-2">
+                      <input type="checkbox" class="form-check-input" formControlName="isMultiple" id="isMultiple{{i}}" />
+                      <label class="form-check-label" for="isMultiple{{i}}">Allow multiple selections</label>
+                    </div>
+                    <div *ngIf="question.get('type')?.value !== 'text'" formArrayName="options">
+                      <label class="form-label">Options</label>
+                      <div *ngFor="let option of getOptions(i).controls; let j = index" class="input-group mb-2">
+                        <input type="text" class="form-control" [formControlName]="j" placeholder="Option text" />
+                        <button class="btn btn-outline-danger" type="button" (click)="removeOption(i, j)">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                      <button class="btn btn-outline-primary" type="button" (click)="addOption(i)">Add Option</button>
+                      <div *ngIf="getOptions(i).length === 0 && question.touched" class="text-danger">
+                        At least one option is required for this question type.
+                      </div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger mt-2" type="button" (click)="removeQuestion(i)">
+                      Remove Question
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-outline-primary" type="button" (click)="addQuestion()">Add Question</button>
+              <div *ngIf="questions.length === 0 && createForm.touched" class="text-danger">
+                At least one question is required.
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="expiryDate" class="form-label">Expiry Date</label>
+              <input type="datetime-local" class="form-control" id="expiryDate" formControlName="expiryDate" />
+              <div *ngIf="createForm.get('expiryDate')?.invalid && createForm.get('expiryDate')?.touched" class="text-danger">
+                Expiry date is required.
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeCreateModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="submitCreateSurvey()" [disabled]="createForm.invalid">Create</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="showCreateModal" class="modal-backdrop fade show"></div>
+
+  <!-- View Survey Modal -->
+  <div *ngIf="showViewModal" class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Survey Preview</h5>
+          <button type="button" class="btn-close" (click)="closeViewModal()"></button>
+        </div>
+        <div class="modal-body" *ngIf="selectedSurvey && !viewLoading">
+          <h4 class="mb-3">{{ selectedSurvey.title }}</h4>
+          <p class="mb-4">{{ selectedSurvey.description }}</p>
+          <div class="mb-4">
+            <h6 class="mb-3">Questions:</h6>
+            <div *ngFor="let question of selectedSurvey.questions; let i = index" class="mb-4">
+              <h6>{{ i + 1 }}. {{ question.questionText }} <small>({{ question.type | titlecase }}{{ question.isMultiple ? ', Multiple' : '' }})</small></h6>
+              <div *ngIf="question.type !== 'text'">
+                <div *ngFor="let option of question.options" class="mb-3">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold">{{ option.text }}</span>
+                    <span>{{ option.count }} responses ({{ option.percentage }}%)</span>
+                  </div>
+                  <div class="progress" style="height: 10px;">
+                    <div class="progress-bar bg-primary" [style.width.%]="option.percentage"></div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="question.type === 'text' || question.type === 'mixed'" class="text-muted">
+                <small>Text responses available (not shown in preview)</small>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Total Responses:</strong> {{ selectedSurvey.totalResponses }}</p>
+              <p><strong>Status:</strong> 
+                <span class="badge rounded-pill" [ngClass]="getStatusBadgeClass(selectedSurvey.expiryDate, selectedSurvey.isActive)">
+                  {{ formatExpiryStatus(selectedSurvey.expiryDate, selectedSurvey.isActive) }}
+                </span>
+              </p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Expiry Date:</strong> {{ formatDate(selectedSurvey.expiryDate) }}</p>
+              <p><strong>Created At:</strong> {{ formatDate(selectedSurvey.createdAt) }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body" *ngIf="viewLoading">
+          <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeViewModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="showViewModal" class="modal-backdrop fade show"></div>
 </div>
