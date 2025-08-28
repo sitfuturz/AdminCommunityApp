@@ -41,6 +41,11 @@ import { DiscussionComponent } from './views/pages/discussion/discussion.compone
 import { CircularComponent } from './views/pages/circular/circular.component';
 import { GalleryComponent } from './views/pages/gallery/gallery.component';
 import { DocumentComponent } from './views/pages/document/document.component';
+import { LeadsComponent } from './views/pages/leads/leads.component';
+import { SurveyComponent } from './views/pages/survey/survey.component';
+import { PollComponent } from './views/pages/poll/poll.component';
+import { TransactionComponent } from './views/pages/transaction/transaction.component';
+import { CasteComponent } from './views/pages/caste/caste.component';
 
 import { SecondhandProductComponent } from './views/pages/secondHandProducts/secondHand.component';
 import { FamilyHistoryComponent } from './views/pages/familyHistory/familyHistory.component';
@@ -109,7 +114,12 @@ export const routes: Routes = [
       { path: 'circular', component: CircularComponent },
       { path: 'gallery', component: GalleryComponent },
       { path: 'blood-group', component: BloodGroupComponent },
-      {path:'analytics',component:AnalyticsComponent}
+      {path:'analytics',component:AnalyticsComponent},
+      { path: 'survey', component: SurveyComponent },
+      { path: 'leads', component: LeadsComponent },
+      { path: 'poll', component: PollComponent },
+      {path: 'transaction', component: TransactionComponent},
+      {path: 'caste', component: CasteComponent}
     ],
   },
 ];

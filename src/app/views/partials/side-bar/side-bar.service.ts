@@ -54,9 +54,9 @@ export class SideBarService {
               icon: 'map-pin',
             },
             {
-              title: 'Chapter',
-              link: 'chapter',
-              icon: 'layers',
+              title: 'Castes',
+              link: 'caste',
+              icon: 'map-pin',
             },
             {
               title: 'Industries',
@@ -72,43 +72,45 @@ export class SideBarService {
           ],
         },
         {
-          title: 'Banner',
-          link: 'banners',
-          icon: 'banner',
-        },
-        {
-          title: 'Badges',
-          link: 'badges',
-          icon: 'award',
-        },
-        {
-          title: 'LeaderBoard',
-          link: 'leaderboard',
-          icon: 'award',
-        },
-        {
-          title: 'Events',
-          link: 'events',
-          icon: 'calendar',
-        },
-        {
-          title: 'Pre Participation',
-          link: 'participation',
-          icon: 'check-circle',
-        },
-        {
-          title: 'Attendence',
-          link: 'attendence',
-          icon: 'check-square',
-        },
-        {
-          title: 'Badge Management',
-          link: 'badgeManagement',
-          icon: 'cog',
+          title: 'Business Form',
+          icon: 'settings',
+          hasSubmenu: true,
+          menu: [
+            {
+              title: 'Chapter',
+              link: 'chapter',
+              icon: 'layers',
+            },
+            {
+              title: 'Attendence',
+              link: 'attendence',
+              icon: 'check-square',
+            },
+            {
+              title: 'Circular',
+              link: 'circular',
+              icon: 'file-text',
+            },
+            {
+              title: 'Document',
+              link: 'document',
+              icon: 'file',
+            },       
+            {
+              title: 'Badge Management',
+              link: 'badgeManagement',
+              icon: 'layers',
+            },
+            {
+              title:'Analytics',
+              link:'analytics',
+              icon:'award'
+            },
+          ],
         },
         // Reports Section with Submenu (with proper icon and hasSubmenu flag)
         {
-          title: 'Reports Section',
+          title: 'Business Reports',
           icon: 'file-text',
           hasSubmenu: true,
           menu: [
@@ -141,12 +143,12 @@ export class SideBarService {
             {
               title: 'Ask Management',
               link: 'askManagement',
-              icon: 'question-circle',
+              icon: 'help-circle',
             },
             {
               title: 'Points History',
               link: 'pointHistory',
-              icon: 'history',
+              icon: 'list',
             },
             {
               title: 'Attendance Record',
@@ -160,64 +162,131 @@ export class SideBarService {
             },
           ],
         },
-        
         {
-          title: 'Complaints',
-          link: 'complaints',
-          icon: 'exclamation-triangle',
+          title: 'Community & Social',
+          icon: 'settings',
+          hasSubmenu: true,
+          menu: [
+            {
+              title: 'Events',
+              link: 'events',
+              icon: 'calendar',
+            },
+            {
+              title: 'Matrimony',
+              link: 'matrimony',
+              icon: 'heart',
+            },
+            {
+              title:'secondHand Product',
+              link:'secondHand',
+              icon:'calendar'
+            },
+            {
+              title:'Family History',
+              link:'family',
+              icon:'calendar'
+            },
+          ],
         },
         {
-          title: 'Suggestions',
-          link: 'suggestions',
-          icon: 'lightbulb',
-        },
-        
-        {
-          title:'secondHand Product',
-          link:'secondHand',
-          icon:'envelope'
-        },
-        {
-          title: 'Jobs',
-          link: 'jobs',
-          icon: 'briefcase',
-        },
-       
-        {
-          title: 'Matrimony',
-          link: 'matrimony',
-          icon: 'marriage',
+          title: 'Services & Marketplace',
+          icon: 'settings',
+          hasSubmenu: true,
+          menu: [
+            {
+              title: 'Jobs',
+              link: 'jobs',
+              icon: 'briefcase',
+            },
+            {
+              title: 'Blood Group',
+              link: 'blood-group',
+              icon: 'briefcase',
+            },
+          ],
         },
         {
-          title: 'Discussion',
-          link: 'discussion',
-          icon: '',
+          title: 'Feedback & Management',
+          icon: 'settings',
+          hasSubmenu: true,
+          menu: [
+            {
+              title: 'Survey',
+              link: 'survey',
+              icon: 'check-circle',
+            },
+            {
+              title: 'Polls',
+              link: 'poll',
+              icon: 'check-circle',
+            },
+            {
+              title: 'Transactions',
+              link: 'transaction',
+              icon: 'check-circle',
+            },
+            {
+              title: 'Complaints',
+              link: 'complaints',
+              icon: 'alert-triangle',
+            },
+          ],
         },
         {
-          title: 'Document',
-          link: 'document',
-          icon: '',
+          title: 'Support & Settings',
+          icon: 'settings',
+          hasSubmenu: true,
+          menu: [
+            {
+              title: 'Suggestions',
+              link: 'suggestions',
+              icon: 'edit',
+            },
+            {
+              title: 'Contact Us',
+              link: 'contactUs',
+              icon: 'mail',
+            },
+          ],
         },
         {
-          title: 'Circular',
-          link: 'circular',
-          icon: '',
-        },
-        {
-          title:'Family History',
-          link:'family',
-          icon:'envelope'
-        },
+          title: 'Other Options',
+          icon: 'settings',
+          hasSubmenu: true,
+          menu: [
+            {
+              title: 'Banner',
+              link: 'banners',
+              icon: 'banner',
+            },
+            {
+              title: 'Badges',
+              link: 'badges',
+              icon: 'award',
+            },
+            {
+              title: 'LeaderBoard',
+              link: 'leaderboard',
+              icon: 'award',
+            },
+            {
+              title: 'Pre Participation',
+              link: 'participation',
+              icon: 'check-circle',
+            },
+            {
+              title: 'Discussion',
+              link: 'discussion',
+              icon: '',
+            },
+            {
+              title: 'Leads',
+              link: 'leads',
+              icon: '',
+            },
 
-        {
-          title:'Analytics',
-          link:'analytics',
-          icon:'advertisement'
-        },
-        {
-          title: 'Blood Group',
-          link: 'blood-group',
-          icon: '',
+          ],
         },
       ],
     },
