@@ -56,8 +56,8 @@ export class PollComponent {
     return this.createForm.get('options') as FormArray;
   }
 
-  addOption(): void {
-    this.options.push(this.fb.control('', Validators.required));
+  addOption(text: string = ''): void {
+    this.options.push(this.fb.control(text, Validators.required));
   }
 
   removeOption(index: number): void {
@@ -156,12 +156,19 @@ export class PollComponent {
 
   openCreateModal(): void {
     this.showCreateModal = true;
+    // Clear options explicitly
+    while (this.options.length > 0) {
+      this.options.removeAt(0);
+    }
     this.createForm.reset({
       title: '',
       description: '',
       options: [],
       expiryDate: this.getDefaultExpiryDate()
     });
+    // Add two default empty options for convenience
+    this.addOption();
+    this.addOption();
   }
 
   closeCreateModal(): void {

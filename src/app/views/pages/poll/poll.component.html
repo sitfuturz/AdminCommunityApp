@@ -178,22 +178,45 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Poll Details</h5>
+          <h5 class="modal-title">Poll Preview</h5>
           <button type="button" class="btn-close" (click)="closeViewModal()"></button>
         </div>
         <div class="modal-body" *ngIf="selectedPoll">
-          <h5>{{ selectedPoll.title }}</h5>
-          <p>{{ selectedPoll.description }}</p>
-          <h6>Options:</h6>
-          <ul>
-            <li *ngFor="let option of selectedPoll.options">
-              {{ option.text }} - Votes: {{ option.voteCount }} ({{ option.percentage }}%)
-            </li>
-          </ul>
-          <p>Total Votes: {{ selectedPoll.totalVotes }}</p>
-          <p>Status: {{ formatExpiryStatus(selectedPoll.expiryDate, selectedPoll.isActive) }}</p>
-          <p>Expiry Date: {{ formatDate(selectedPoll.expiryDate) }}</p>
-          <p>Created At: {{ formatDate(selectedPoll.createdAt) }}</p>
+          <h4 class="mb-3">{{ selectedPoll.title }}</h4>
+          <p class="mb-4">{{ selectedPoll.description }}</p>
+          <div class="mb-4">
+            <h6 class="mb-3">Options:</h6>
+            <div *ngFor="let option of selectedPoll.options" class="mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="fw-bold">{{ option.text }}</span>
+                <span>{{ option.voteCount }} votes ({{ option.percentage }}%)</span>
+              </div>
+              <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-primary" [style.width.%]="option.percentage"></div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Total Votes:</strong> {{ selectedPoll.totalVotes }}</p>
+              <p><strong>Status:</strong> 
+                <span class="badge rounded-pill" [ngClass]="getStatusBadgeClass(selectedPoll.expiryDate, selectedPoll.isActive)">
+                  {{ formatExpiryStatus(selectedPoll.expiryDate, selectedPoll.isActive) }}
+                </span>
+              </p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Expiry Date:</strong> {{ formatDate(selectedPoll.expiryDate) }}</p>
+              <p><strong>Created At:</strong> {{ formatDate(selectedPoll.createdAt) }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body" *ngIf="viewLoading">
+          <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="closeViewModal()">Close</button>
