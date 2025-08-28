@@ -3560,6 +3560,7 @@ export class ParticipationService {
             this.headers
           );
           
+          
           return response;
         } catch (error) {
           console.error('Register User Error:', error);

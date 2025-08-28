@@ -9,6 +9,7 @@ import { CityService, City } from '../../../services/auth.service';
 import { ChapterService, Chapter } from '../../../services/auth.service';
 import { AuthService } from '../../../services/auth.service';
 import { DashboardService } from '../../../services/auth.service';
+import { SubCategoryService, SubCategory, SubCategoryResponse } from '../../../services/auth.service';
 import { swalHelper } from '../../../core/constants/swal-helper';
 import { debounceTime, Subject } from 'rxjs';
 
@@ -19,7 +20,7 @@ declare var bootstrap: any;
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, FormsModule, NgSelectModule],
-  providers: [RegisterUserAuthService, CountryService, StateService, CityService, ChapterService, AuthService, DashboardService],
+  providers: [RegisterUserAuthService, CountryService, StateService, CityService, ChapterService, AuthService, DashboardService, SubCategoryService],
   templateUrl: './userRegisteration.component.html',
   styleUrls: ['./userRegisteration.component.css']
 })
@@ -29,7 +30,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     email: '',
     mobile_number: '',
     chapter_name: '',
-    meeting_role: '',
+    meeting_role: 'Member', // Default to Member
     profilePic: null,
     date_of_birth: '',
     city: '',
@@ -37,7 +38,9 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     country: '',
     sponseredBy: null,
     keywords: '',
-    induction_date: ''
+    induction_date: '',
+    occupation_type: '',
+    industry: ''
   };
 
   countries: Country[] = [];
@@ -45,19 +48,22 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   cities: City[] = [];
   chapters: Chapter[] = [];
   users: User[] = [];
-  
+  industries: SubCategory[] = [];
+
   loading: boolean = false;
   countriesLoading: boolean = false;
   statesLoading: boolean = false;
   citiesLoading: boolean = false;
   chaptersLoading: boolean = false;
   usersLoading: boolean = false;
-  
+  industriesLoading: boolean = false;
+
   countriesLoaded: boolean = false;
   statesLoaded: boolean = false;
   citiesLoaded: boolean = false;
   chaptersLoaded: boolean = false;
   usersLoaded: boolean = false;
+  industriesLoaded: boolean = false;
 
   // Track which fields have been touched/interacted with
   touchedFields: any = {
@@ -68,7 +74,9 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     state: false,
     city: false,
     chapter_name: false,
-    induction_date: false
+    induction_date: false,
+    occupation_type: false,
+    industry: false
   };
 
   // Validation error messages
@@ -80,12 +88,18 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     state: '',
     city: '',
     chapter_name: '',
-    induction_date: ''
+    induction_date: '',
+    occupation_type: '',
+    industry: ''
   };
 
-  // Add meetingRoles array to fix the error
+  occupationTypes = [
+    { name: 'Job', value: 'Job' },
+    { name: 'Business', value: 'Business' }
+  ];
+
   meetingRoles = [
-    { name: 'Leader', value: 'Leader' },
+    { name: 'Committee Member', value: 'Committee Member' },
     { name: 'Member', value: 'Member' }
   ];
 
@@ -100,6 +114,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     private chapterService: ChapterService,
     private authService: AuthService,
     private dashboardService: DashboardService,
+    private subCategoryService: SubCategoryService,
     private cdr: ChangeDetectorRef
   ) {
     this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
@@ -112,6 +127,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     this.fetchStates();
     this.fetchCities();
     this.fetchUsers();
+    this.fetchIndustries();
   }
 
   ngAfterViewInit(): void {
@@ -193,7 +209,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     this.chaptersLoaded = false;
     try {
       const response = await this.dashboardService.getChaptersByCity(cityName);
-      this.chapters = response.data || response.data || [];
+      this.chapters = response.data || [];
       this.chaptersLoaded = true;
     } catch (error) {
       console.error('Error fetching chapters by city:', error);
@@ -225,11 +241,30 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     }
   }
 
+  async fetchIndustries(): Promise<void> {
+    this.industriesLoading = true;
+    this.industriesLoaded = false;
+    try {
+      const response = await this.subCategoryService.getSubCategories({
+        page: 1,
+        limit: 1000,
+        search: '',
+      });
+      this.industries = response.docs;
+      this.industriesLoaded = true;
+    } catch (error) {
+      console.error('Error fetching industries:', error);
+      swalHelper.showToast('Failed to fetch industries', 'error');
+    } finally {
+      this.industriesLoading = false;
+      this.cdr.detectChanges();
+    }
+  }
+
   onCityChange(): void {
     this.registerForm.chapter_name = '';
     this.validationErrors.chapter_name = '';
-    this.touchedFields.chapter_name = false; // Reset touched state for chapter
-    
+    this.touchedFields.chapter_name = false;
     if (this.registerForm.city) {
       this.fetchChaptersByCity(this.registerForm.city);
     } else {
@@ -237,18 +272,24 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     }
   }
 
+  onOccupationTypeChange(): void {
+    this.touchedFields.occupation_type = true;
+    this.validateOccupationType();
+    if (this.registerForm.occupation_type !== 'Business') {
+      this.registerForm.industry = '';
+      this.touchedFields.industry = false;
+      this.validationErrors.industry = '';
+    }
+  }
+
   onMobileInput(event: any): void {
     const input = event.target;
     let value = input.value.replace(/\D/g, '');
-    
     if (value.length > 10) {
       value = value.substring(0, 10);
     }
-    
     this.registerForm.mobile_number = value;
     input.value = value;
-    
-    // Mark as touched and validate
     this.touchedFields.mobile_number = true;
     if (value.length === 10) {
       this.validationErrors.mobile_number = '';
@@ -258,10 +299,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   }
 
   validateName(): boolean {
-    if (!this.touchedFields.name) {
-      return true; // Don't validate untouched fields
-    }
-
+    if (!this.touchedFields.name) return true;
     const name = this.registerForm.name.trim();
     if (!name) {
       this.validationErrors.name = 'Full name is required';
@@ -280,10 +318,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   }
 
   validateEmail(): boolean {
-    if (!this.touchedFields.email) {
-      return true;
-    }
-
+    if (!this.touchedFields.email) return true;
     const email = this.registerForm.email.trim();
     if (!email) {
       this.validationErrors.email = 'Email is required';
@@ -299,10 +334,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   }
 
   validateMobileNumber(): boolean {
-    if (!this.touchedFields.mobile_number) {
-      return true;
-    }
-
+    if (!this.touchedFields.mobile_number) return true;
     const mobile = this.registerForm.mobile_number;
     if (!mobile) {
       this.validationErrors.mobile_number = 'Mobile number is required';
@@ -317,10 +349,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   }
 
   validateCountry(): boolean {
-    if (!this.touchedFields.country) {
-      return true;
-    }
-
+    if (!this.touchedFields.country) return true;
     if (!this.registerForm.country) {
       this.validationErrors.country = 'Country is required';
       return false;
@@ -330,10 +359,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   }
 
   validateState(): boolean {
-    if (!this.touchedFields.state) {
-      return true;
-    }
-
+    if (!this.touchedFields.state) return true;
     if (!this.registerForm.state) {
       this.validationErrors.state = 'State is required';
       return false;
@@ -343,10 +369,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   }
 
   validateCity(): boolean {
-    if (!this.touchedFields.city) {
-      return true;
-    }
-
+    if (!this.touchedFields.city) return true;
     if (!this.registerForm.city) {
       this.validationErrors.city = 'City is required';
       return false;
@@ -356,10 +379,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   }
 
   validateChapter(): boolean {
-    if (!this.touchedFields.chapter_name) {
-      return true;
-    }
-
+    if (!this.touchedFields.chapter_name) return true;
     if (!this.registerForm.chapter_name) {
       this.validationErrors.chapter_name = 'Chapter is required';
       return false;
@@ -369,25 +389,38 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   }
 
   validateInductionDate(): boolean {
-    if (!this.touchedFields.induction_date) {
-      return true;
-    }
-
+    if (!this.touchedFields.induction_date) return true;
     const induction_date = this.registerForm.induction_date;
     if (!induction_date) {
       this.validationErrors.induction_date = 'Induction date is required';
       return false;
     }
-
     this.validationErrors.induction_date = '';
     return true;
   }
 
+  validateOccupationType(): boolean {
+    if (!this.touchedFields.occupation_type) return true;
+    if (!this.registerForm.occupation_type) {
+      this.validationErrors.occupation_type = 'Occupation type is required';
+      return false;
+    }
+    this.validationErrors.occupation_type = '';
+    return true;
+  }
+
+  validateIndustry(): boolean {
+    if (!this.touchedFields.industry) return true;
+    if (this.registerForm.occupation_type === 'Business' && !this.registerForm.industry) {
+      this.validationErrors.industry = 'Industry is required for Business';
+      return false;
+    }
+    this.validationErrors.industry = '';
+    return true;
+  }
+
   onFieldBlur(fieldName: string): void {
-    // Mark field as touched
     this.touchedFields[fieldName] = true;
-    
-    // Then validate
     switch (fieldName) {
       case 'name':
         this.validateName();
@@ -413,6 +446,12 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       case 'induction_date':
         this.validateInductionDate();
         break;
+      case 'occupation_type':
+        this.validateOccupationType();
+        break;
+      case 'industry':
+        this.validateIndustry();
+        break;
     }
   }
 
@@ -425,9 +464,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
 
   async registerUser(): Promise<void> {
     try {
-      // Mark all required fields as touched before final validation
       this.markAllRequiredFieldsAsTouched();
-      
       if (!this.validateFormForSubmission()) {
         swalHelper.showToast('Please fix all validation errors', 'warning');
         return;
@@ -440,17 +477,17 @@ export class RegisterComponent implements OnInit, AfterViewInit {
         if (key === 'profilePic' && this.registerForm[key]) {
           formData.append(key, this.registerForm[key]);
         } else if (key === 'induction_date' && this.registerForm[key]) {
-          // Explicitly format induction_date to YYYY-MM-DD
           const formattedDate = new Date(this.registerForm[key]).toISOString().split('T')[0];
           formData.append(key, formattedDate);
         } else if (key === 'sponseredBy') {
-          // Only append sponseredBy if it has a valid value (not null or empty)
           if (this.registerForm[key] && this.registerForm[key] !== 'null' && this.registerForm[key] !== '') {
             formData.append(key, this.registerForm[key]);
           }
-          // Do not append sponseredBy if it’s null or empty (backend will use default: null)
+        } else if (key === 'industry') {
+          if (this.registerForm.occupation_type === 'Business' && this.registerForm[key]) {
+            formData.append(key, this.registerForm[key]);
+          }
         } else {
-          // Append all other fields, including empty ones
           formData.append(key, this.registerForm[key] || '');
         }
       });
@@ -481,92 +518,24 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     this.touchedFields.city = true;
     this.touchedFields.chapter_name = true;
     this.touchedFields.induction_date = true;
+    this.touchedFields.occupation_type = true;
+    if (this.registerForm.occupation_type === 'Business') {
+      this.touchedFields.industry = true;
+    }
   }
 
   validateFormForSubmission(): boolean {
-    const name = this.registerForm.name.trim();
-    const email = this.registerForm.email.trim();
-    const mobile = this.registerForm.mobile_number;
-    const induction_date = this.registerForm.induction_date;
-    
     let isValid = true;
-
-    // Validate name
-    if (!name) {
-      this.validationErrors.name = 'Full name is required';
-      isValid = false;
-    } else if (name.length < 2) {
-      this.validationErrors.name = 'Full name must be at least 2 characters';
-      isValid = false;
-    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-      this.validationErrors.name = 'Full name can only contain letters and spaces';
-      isValid = false;
-    } else {
-      this.validationErrors.name = '';
-    }
-
-    // Validate email
-    if (!email) {
-      this.validationErrors.email = 'Email is required';
-      isValid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      this.validationErrors.email = 'Please enter a valid email address';
-      isValid = false;
-    } else {
-      this.validationErrors.email = '';
-    }
-
-    // Validate mobile
-    if (!mobile) {
-      this.validationErrors.mobile_number = 'Mobile number is required';
-      isValid = false;
-    } else if (!/^\d{10}$/.test(mobile)) {
-      this.validationErrors.mobile_number = 'Mobile number must be exactly 10 digits';
-      isValid = false;
-    } else {
-      this.validationErrors.mobile_number = '';
-    }
-
-    // Validate country
-    if (!this.registerForm.country) {
-      this.validationErrors.country = 'Country is required';
-      isValid = false;
-    } else {
-      this.validationErrors.country = '';
-    }
-
-    // Validate state
-    if (!this.registerForm.state) {
-      this.validationErrors.state = 'State is required';
-      isValid = false;
-    } else {
-      this.validationErrors.state = '';
-    }
-
-    // Validate city
-    if (!this.registerForm.city) {
-      this.validationErrors.city = 'City is required';
-      isValid = false;
-    } else {
-      this.validationErrors.city = '';
-    }
-
-    // Validate chapter
-    if (!this.registerForm.chapter_name) {
-      this.validationErrors.chapter_name = 'Chapter is required';
-      isValid = false;
-    } else {
-      this.validationErrors.chapter_name = '';
-    }
-
-    // Validate induction date
-    if (!induction_date) {
-      this.validationErrors.induction_date = 'Induction date is required';
-      isValid = false;
-    } else {
-      this.validationErrors.induction_date = '';
-    }
-
+    isValid = this.validateName() && isValid;
+    isValid = this.validateEmail() && isValid;
+    isValid = this.validateMobileNumber() && isValid;
+    isValid = this.validateCountry() && isValid;
+    isValid = this.validateState() && isValid;
+    isValid = this.validateCity() && isValid;
+    isValid = this.validateChapter() && isValid;
+    isValid = this.validateInductionDate() && isValid;
+    isValid = this.validateOccupationType() && isValid;
+    isValid = this.validateIndustry() && isValid;
     return isValid && this.registerForm.meeting_role;
   }
 
@@ -584,7 +553,9 @@ export class RegisterComponent implements OnInit, AfterViewInit {
            this.registerForm.city &&
            this.registerForm.chapter_name &&
            this.registerForm.meeting_role &&
-           induction_date;
+           induction_date &&
+           this.registerForm.occupation_type &&
+           (this.registerForm.occupation_type !== 'Business' || this.registerForm.industry);
   }
 
   resetForm(): void {
@@ -593,7 +564,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       email: '',
       mobile_number: '',
       chapter_name: '',
-      meeting_role: '',
+      meeting_role: 'Member', // Default to Member
       profilePic: null,
       date_of_birth: '',
       city: '',
@@ -601,10 +572,11 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       country: '',
       sponseredBy: null,
       keywords: '',
-      induction_date: ''
+      induction_date: '',
+      occupation_type: '',
+      industry: ''
     };
 
-    // Reset validation errors
     this.validationErrors = {
       name: '',
       email: '',
@@ -613,10 +585,11 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       state: '',
       city: '',
       chapter_name: '',
-      induction_date: ''
+      induction_date: '',
+      occupation_type: '',
+      industry: ''
     };
 
-    // Reset touched fields
     this.touchedFields = {
       name: false,
       email: false,
@@ -625,7 +598,9 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       state: false,
       city: false,
       chapter_name: false,
-      induction_date: false
+      induction_date: false,
+      occupation_type: false,
+      industry: false
     };
 
     this.chapters = [];

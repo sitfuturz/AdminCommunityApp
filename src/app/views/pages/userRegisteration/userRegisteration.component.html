@@ -34,7 +34,7 @@
         <h5 class="modal-title" id="registerModalTitle">
           <i class="bi bi-person-plus me-2"></i>Register New User
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal()"></button>
       </div>
       <div class="modal-body p-4">
         <form>
@@ -107,14 +107,55 @@
               </ng-select>
             </div>
           </div>
-      
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="occupation_type" class="form-label">Occupation Type <span class="text-danger">*</span></label>
+              <ng-select
+                id="occupation_type"
+                [items]="occupationTypes"
+                bindLabel="name"
+                bindValue="value"
+                placeholder="Select occupation type"
+                [(ngModel)]="registerForm.occupation_type"
+                name="occupation_type"
+                required
+                (change)="onOccupationTypeChange()"
+                (blur)="onFieldBlur('occupation_type')"
+                [class.is-invalid]="validationErrors.occupation_type">
+              </ng-select>
+              <div class="invalid-feedback" *ngIf="validationErrors.occupation_type">
+                {{ validationErrors.occupation_type }}
+              </div>
+            </div>
+            <div class="col-md-6 mb-3" *ngIf="registerForm.occupation_type === 'Business'">
+              <label for="industry" class="form-label">Industry <span class="text-danger">*</span></label>
+              <ng-select
+                id="industry"
+                [items]="industries"
+                bindLabel="name"
+                bindValue="name"
+                placeholder="Select industry"
+                [(ngModel)]="registerForm.industry"
+                name="industry"
+                required
+                [loading]="industriesLoading"
+                (blur)="onFieldBlur('industry')"
+                [class.is-invalid]="validationErrors.industry">
+              </ng-select>
+              <div class="invalid-feedback" *ngIf="validationErrors.industry">
+                {{ validationErrors.industry }}
+              </div>
+              <div *ngIf="industriesLoading" class="text-muted mt-1 small">Loading industries...</div>
+            </div>
+          </div>
+
           <div class="row">
             <div class="col-md-6 mb-3">
               <label for="keywords" class="form-label">Keywords</label>
               <input type="text" class="form-control" id="keywords" placeholder="Enter keywords"
                 [(ngModel)]="registerForm.keywords" name="keywords">
             </div>
-          
             <div class="col-md-6 mb-3">
               <label for="country" class="form-label">Country <span class="text-danger">*</span></label>
               <ng-select
@@ -252,7 +293,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-outline-secondary rounded-pill" (click)="closeModal()">
           <i class="bi bi-x-circle me-1"></i>Cancel
         </button>
         <button 
