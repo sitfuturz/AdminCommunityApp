@@ -5,14 +5,15 @@ import { common } from '../core/constants/common';
 import { ApiManager } from '../core/utilities/api-manager';
 import { AppStorage } from '../core/utilities/app-storage';
 
-export interface Caste {
+export interface SubCaste {
   _id: string;
+  caste_id: string;
   name: string;
   createdAt: string;
 }
 
-export interface CasteResponse {
-  docs: Caste[];
+export interface SubCasteResponse {
+  docs: SubCaste[];
   totalDocs: number;
   limit: number;
   page: number;
@@ -27,7 +28,7 @@ export interface CasteResponse {
 @Injectable({
   providedIn: 'root'
 })
-export class CasteService {
+export class SubCasteService {
   private headers: any = [];
 
   constructor(private apiManager: ApiManager, private storage: AppStorage) {}
@@ -40,25 +41,22 @@ export class CasteService {
     }
   };
 
-  async getCastes(data: any): Promise<CasteResponse> {
+  async getSubCastes(data: any): Promise<SubCasteResponse> {
     try {
       this.getHeaders();
       const response = await this.apiManager.request(
         {
-          url: apiEndpoints.CASTE_GET_ALL,
+          url: apiEndpoints.SUBCASTE_GET_ALL,
           method: 'POST',
         },
         data,
         this.headers
       );
-
-      console.log('Caste service response:', response);
       if (response.status === 200 && response.data) {
-        console.log('Caste data:', response.data);
         return response.data;
       } else {
-        swalHelper.showToast(response.message || 'No castes found', 'warning');
-        throw new Error(response.message || 'No castes found');
+        swalHelper.showToast(response.message || 'No sub-castes found', 'warning');
+        throw new Error(response.message || 'No sub-castes found');
       }
     } catch (err: any) {
       swalHelper.showToast(err.message || 'Something went wrong!', 'error');
@@ -66,12 +64,12 @@ export class CasteService {
     }
   }
 
-  async addCaste(data: any): Promise<any> {
+  async addSubCaste(data: any): Promise<any> {
     try {
       this.getHeaders();
       const response = await this.apiManager.request(
         {
-          url: apiEndpoints.CASTE_ADD,
+          url: apiEndpoints.SUBCASTE_ADD,
           method: 'POST',
         },
         data,
@@ -80,8 +78,8 @@ export class CasteService {
       if (response.status === 201) {
         return response.data;
       } else {
-        swalHelper.showToast(response.message || 'Failed to add caste', 'error');
-        throw new Error(response.message || 'Failed to add caste');
+        swalHelper.showToast(response.message || 'Failed to add sub-caste', 'error');
+        throw new Error(response.message || 'Failed to add sub-caste');
       }
     } catch (err: any) {
       swalHelper.showToast(err.message || 'Something went wrong!', 'error');
@@ -89,12 +87,12 @@ export class CasteService {
     }
   }
 
-  async updateCaste(data: any): Promise<any> {
+  async updateSubCaste(data: any): Promise<any> {
     try {
       this.getHeaders();
       const response = await this.apiManager.request(
         {
-          url: `${apiEndpoints.CASTE_UPDATE}/${data._id}`,
+          url: `${apiEndpoints.SUBCASTE_UPDATE}/${data._id}`,
           method: 'POST',
         },
         data,
@@ -103,8 +101,8 @@ export class CasteService {
       if (response.status === 200) {
         return response.data;
       } else {
-        swalHelper.showToast(response.message || 'Failed to update caste', 'error');
-        throw new Error(response.message || 'Failed to update caste');
+        swalHelper.showToast(response.message || 'Failed to update sub-caste', 'error');
+        throw new Error(response.message || 'Failed to update sub-caste');
       }
     } catch (err: any) {
       swalHelper.showToast(err.message || 'Something went wrong!', 'error');
@@ -112,12 +110,12 @@ export class CasteService {
     }
   }
 
-  async deleteCaste(data: any): Promise<any> {
+  async deleteSubCaste(data: any): Promise<any> {
     try {
       this.getHeaders();
       const response = await this.apiManager.request(
         {
-          url: `${apiEndpoints.CASTE_DELETE}/${data._id}`,
+          url: `${apiEndpoints.SUBCASTE_DELETE}/${data._id}`,
           method: 'POST',
         },
         {},
@@ -126,8 +124,8 @@ export class CasteService {
       if (response.status === 200) {
         return response.data;
       } else {
-        swalHelper.showToast(response.message || 'Failed to delete caste', 'error');
-        throw new Error(response.message || 'Failed to delete caste');
+        swalHelper.showToast(response.message || 'Failed to delete sub-caste', 'error');
+        throw new Error(response.message || 'Failed to delete sub-caste');
       }
     } catch (err: any) {
       swalHelper.showToast(err.message || 'Something went wrong!', 'error');

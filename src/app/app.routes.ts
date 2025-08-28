@@ -46,6 +46,7 @@ import { SurveyComponent } from './views/pages/survey/survey.component';
 import { PollComponent } from './views/pages/poll/poll.component';
 import { TransactionComponent } from './views/pages/transaction/transaction.component';
 import { CasteComponent } from './views/pages/caste/caste.component';
+import { SubcasteComponent } from './views/pages/subcaste/subcaste.component';
 
 import { SecondhandProductComponent } from './views/pages/secondHandProducts/secondHand.component';
 import { FamilyHistoryComponent } from './views/pages/familyHistory/familyHistory.component';
@@ -119,7 +120,8 @@ export const routes: Routes = [
       { path: 'leads', component: LeadsComponent },
       { path: 'poll', component: PollComponent },
       {path: 'transaction', component: TransactionComponent},
-      {path: 'caste', component: CasteComponent}
+      {path: 'caste', component: CasteComponent},
+      {path: 'subcaste', component: SubcasteComponent},
     ],
   },
 ];

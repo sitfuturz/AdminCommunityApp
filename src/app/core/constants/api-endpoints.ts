@@ -198,15 +198,17 @@ public TRANSACTION_FETCH_WITH_BALANCE: string = `${this.PATH}/transactions/fetch
 
   //castes
   public CASTE_GET_ALL: string = `${this.PATH}/fetchAllCastes`;
-  public CASTE_ADD: string = `${this.PATH}/addCaste`;
+  public CASTE_ADD: string = `${this.PATH}/createCaste`;
   public CASTE_DELETE: string = `${this.PATH}/deleteCaste`;
   public CASTE_UPDATE: string = `${this.PATH}/updateCaste`;
 
   // SubCastes
 public SUBCASTE_GET_ALL: string = `${this.PATH}/fetchAllSubCastes`;
-public SUBCASTE_ADD: string = `${this.PATH}/addSubCaste`;
+public SUBCASTE_ADD: string = `${this.PATH}/createSubCaste`;
 public SUBCASTE_DELETE: string = `${this.PATH}/deleteSubCaste`;
 public SUBCASTE_UPDATE: string = `${this.PATH}/updateSubCaste`;
+
+
 
 }
 

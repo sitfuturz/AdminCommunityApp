@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { debounceTime, Subject } from 'rxjs';
@@ -18,8 +18,9 @@ export class CasteComponent {
   castes: CasteResponse | null = null;
   loading: boolean = false;
   searchQuery: string = '';
+  showCasteModal: boolean = false;
   selectedCaste: any = null;
-  casteName: string = '';
+  casteForm: FormGroup;
 
   payload = {
     search: '',
@@ -31,8 +32,13 @@ export class CasteComponent {
 
   constructor(
     private casteService: CasteService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder
   ) {
+    this.casteForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(1)]]
+    });
+
     this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
       this.fetchCastes();
     });
@@ -46,6 +52,7 @@ export class CasteComponent {
     this.loading = true;
     try {
       const response = await this.casteService.getCastes(this.payload);
+      console.log('Fetched castes:', response);
       this.castes = response || null;
       this.cdr.detectChanges();
     } catch (error) {
@@ -80,52 +87,61 @@ export class CasteComponent {
 
   openAddModal(): void {
     this.selectedCaste = null;
-    this.casteName = '';
-    // Open Bootstrap modal (assume #casteModal is the ID)
-    const modal = document.getElementById('casteModal');
-    if (modal) {
-      (modal as any).modal('show');
-    }
+    this.casteForm.reset({ name: '' });
+    this.showCasteModal = true;
   }
 
   openEditModal(caste: any): void {
     this.selectedCaste = caste;
-    this.casteName = caste.name;
-    const modal = document.getElementById('casteModal');
-    if (modal) {
-      (modal as any).modal('show');
-    }
+    this.casteForm.setValue({ name: caste.name });
+    this.showCasteModal = true;
+  }
+
+  closeCasteModal(): void {
+    this.showCasteModal = false;
+    this.selectedCaste = null;
+    this.casteForm.reset({ name: '' });
   }
 
   async saveCaste(): Promise<void> {
+    if (this.casteForm.invalid) {
+      swalHelper.showToast('Please enter a valid caste name!', 'warning');
+      return;
+    }
+
     try {
       if (this.selectedCaste) {
         // Update
-        await this.casteService.updateCaste({});
+        await this.casteService.updateCaste({
+          _id: this.selectedCaste._id,
+          name: this.casteForm.value.name
+        });
         swalHelper.showToast('Caste updated successfully', 'success');
       } else {
         // Add
-        await this.casteService.addCaste({ name: this.casteName });
+        await this.casteService.addCaste({ name: this.casteForm.value.name });
         swalHelper.showToast('Caste added successfully', 'success');
       }
-      const modal = document.getElementById('casteModal');
-      if (modal) {
-        (modal as any).modal('hide');
-      }
-      this.fetchCastes(); // Refresh list
+      this.closeCasteModal();
+      this.fetchCastes();
     } catch (error) {
+      console.error('Error saving caste:', error);
       swalHelper.showToast('Failed to save caste', 'error');
     }
   }
 
-  async deleteCaste(id: string): Promise<void> {
+  async deleteCaste(caste: any): Promise<void> {
     try {
-      // await swalHelper.showConfirm('Are you sure you want to delete this caste?', 'warning');
-      await this.casteService.deleteCaste(id);
+      await swalHelper.confirmation(
+        'Delete Caste',
+        'Are you sure you want to delete this caste?',
+        'warning');
+      await this.casteService.deleteCaste({ _id: caste._id });
       swalHelper.showToast('Caste deleted successfully', 'success');
-      this.fetchCastes(); // Refresh list
+      this.fetchCastes();
     } catch (error) {
       if (error !== 'cancel') {
+        console.error('Error deleting caste:', error);
         swalHelper.showToast('Failed to delete caste', 'error');
       }
     }

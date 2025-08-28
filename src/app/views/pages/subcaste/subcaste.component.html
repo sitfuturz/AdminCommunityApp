@@ -2,10 +2,10 @@
   <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
     <div class="card-header header-bg d-flex justify-content-between align-items-center py-3 px-4">
       <h4 class="mb-0 fw-bold text-white">
-        <i class="bi bi-people me-2"></i>Caste Management
+        <i class="bi bi-people-fill me-2"></i>Sub-Caste Management
       </h4>
       <button class="btn btn-outline-light btn-sm" (click)="openAddModal()">
-        <i class="bi bi-plus-circle me-1"></i>Add Caste
+        <i class="bi bi-plus-circle me-1"></i>Add Sub-Caste
       </button>
     </div>
     <div class="card-body p-0">
@@ -18,7 +18,7 @@
               <input
                 type="text"
                 class="form-control border-start-0"
-                placeholder="Search castes by name"
+                placeholder="Search sub-castes by name"
                 [(ngModel)]="searchQuery"
                 (input)="onSearch()"
               />
@@ -43,12 +43,13 @@
         </div>
       </div>
 
-      <!-- Caste Table -->
-      <div *ngIf="!loading && castes && castes.docs && castes.docs.length > 0" class="table-responsive p-3">
+      <!-- Sub-Caste Table -->
+      <div *ngIf="!loading && subcastes && subcastes.docs && subcastes.docs.length > 0" class="table-responsive p-3">
         <table class="table table-hover align-middle mb-0">
           <thead class="bg-light">
             <tr>
-              <th class="ps-4 py-3" style="width: 70%">Name</th>
+              <th class="ps-4 py-3" style="width: 35%">Name</th>
+              <th class="py-3" style="width: 35%">Caste</th>
               <th class="py-3" style="width: 15%">Created At</th>
               <th class="py-3" style="width: 15%">Actions</th>
             </tr>
@@ -56,12 +57,12 @@
           <tbody>
             <tr
               *ngFor="
-                let caste of castes.docs
+                let subcaste of subcastes.docs
                   | paginate
                     : {
                         itemsPerPage: payload.limit,
                         currentPage: payload.page,
-                        totalItems: castes.totalDocs
+                        totalItems: subcastes.totalDocs
                       };
                 let i = index
               "
@@ -69,17 +70,20 @@
             >
               <td class="ps-4 py-3">
                 <div class="fw-bold text-dark">
-                  {{ caste.name }}
+                  {{ subcaste.name }}
                 </div>
               </td>
               <td class="py-3">
-                {{ formatDate(caste.createdAt) }}
+  {{ getCasteName(subcaste) }}
+</td>
+              <td class="py-3">
+                {{ formatDate(subcaste.createdAt) }}
               </td>
               <td class="py-3">
-                <button class="btn btn-sm btn-primary me-2" (click)="openEditModal(caste)">
+                <button class="btn btn-sm btn-primary me-2" (click)="openEditModal(subcaste)">
                   <i class="bi bi-pencil me-1"></i>Edit
                 </button>
-                <button class="btn btn-sm btn-danger" (click)="deleteCaste(caste)">
+                <button class="btn btn-sm btn-danger" (click)="deleteSubcaste(subcaste)">
                   <i class="bi bi-trash me-1"></i>Delete
                 </button>
               </td>
@@ -94,52 +98,67 @@
 
       <!-- Empty State -->
       <div
-        *ngIf="!loading && (!castes || !castes.docs || castes.docs.length === 0)"
+        *ngIf="!loading && (!subcastes || !subcastes.docs || subcastes.docs.length === 0)"
         class="text-center my-5 py-4 px-4"
       >
         <div class="empty-state">
-          <i class="bi bi-people fs-1 text-muted mb-3"></i>
-          <h5>No Castes Found</h5>
-          <p class="text-muted">No castes available at the moment.</p>
+          <i class="bi bi-people-fill fs-1 text-muted mb-3"></i>
+          <h5>No Sub-Castes Found</h5>
+          <p class="text-muted">No sub-castes available at the moment.</p>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Add/Edit Modal -->
-  <div class="modal fade" [ngClass]="{ 'show d-block': showCasteModal }" tabindex="-1" role="dialog">
+  <div class="modal fade" [ngClass]="{ 'show d-block': showSubcasteModal }" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content rounded-4 shadow">
         <div class="modal-header bg-light border-0">
-          <h5 class="modal-title fw-bold">{{ selectedCaste ? 'Edit Caste' : 'Add Caste' }}</h5>
-          <button type="button" class="btn-close" (click)="closeCasteModal()"></button>
+          <h5 class="modal-title fw-bold">{{ selectedSubcaste ? 'Edit Sub-Caste' : 'Add Sub-Caste' }}</h5>
+          <button type="button" class="btn-close" (click)="closeSubcasteModal()"></button>
         </div>
         <div class="modal-body">
-          <form [formGroup]="casteForm">
+          <form [formGroup]="subcasteForm">
             <div class="mb-3">
-              <label for="casteName" class="form-label fw-medium">Caste Name</label>
+              <label for="casteId" class="form-label fw-medium">Caste</label>
+              <ng-select
+                [items]="castes?.docs || []"
+                bindLabel="name"
+                bindValue="_id"
+                formControlName="caste_id"
+                placeholder="Select a caste"
+                [loading]="casteLoading"
+                class="custom-ng-select"
+              ></ng-select>
+              <small class="text-danger" *ngIf="subcasteForm.get('caste_id')?.invalid && subcasteForm.get('caste_id')?.touched">
+                Please select a caste.
+              </small>
+            </div>
+            <div class="mb-3">
+              <label for="subcasteName" class="form-label fw-medium">Sub-Caste Name</label>
               <input
                 type="text"
                 class="form-control"
-                id="casteName"
+                id="subcasteName"
                 formControlName="name"
-                placeholder="Enter caste name"
+                placeholder="Enter sub-caste name"
               />
-              <small class="text-danger" *ngIf="casteForm.get('name')?.invalid && casteForm.get('name')?.touched">
-                Caste name is required.
+              <small class="text-danger" *ngIf="subcasteForm.get('name')?.invalid && subcasteForm.get('name')?.touched">
+                Sub-caste name is required.
               </small>
             </div>
           </form>
         </div>
         <div class="modal-footer border-0">
-          <button type="button" class="btn btn-outline-secondary" (click)="closeCasteModal()">Cancel</button>
+          <button type="button" class="btn btn-outline-secondary" (click)="closeSubcasteModal()">Cancel</button>
           <button
             type="button"
             class="btn btn-primary"
-            (click)="saveCaste()"
-            [disabled]="casteForm.invalid"
+            (click)="saveSubcaste()"
+            [disabled]="subcasteForm.invalid"
           >
-            {{ selectedCaste ? 'Update' : 'Add' }}
+            {{ selectedSubcaste ? 'Update' : 'Add' }}
           </button>
         </div>
       </div>

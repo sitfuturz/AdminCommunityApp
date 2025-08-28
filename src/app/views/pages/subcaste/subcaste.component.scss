@@ -70,7 +70,8 @@
     font-size: 0.9rem;
     color: #495057;
   }
-  .form-control {
+  .form-control,
+  .ng-select .ng-select-container {
     border-radius: 0.3rem;
     &:focus {
       border-color: #007bff;

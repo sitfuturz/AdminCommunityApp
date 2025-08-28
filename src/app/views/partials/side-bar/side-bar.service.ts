@@ -59,6 +59,11 @@ export class SideBarService {
               icon: 'map-pin',
             },
             {
+              title: 'subcaste',
+              link: 'subcaste',
+              icon: 'map-pin',
+            },
+            {
               title: 'Industries',
               link: 'category',
               icon: 'tag',
