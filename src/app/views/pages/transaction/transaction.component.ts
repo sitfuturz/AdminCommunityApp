@@ -70,7 +70,6 @@ export class TransactionComponent {
     this.loading = true;
     try {
       const response = await this.transactionService.fetchTransactionsWithBalance({});
-      console.log('Fetched transactions with balance:', response);
       this.transactionsWithBalance = response || null;
       this.transactions = response?.transactions || [];
       this.applySearchAndPagination();

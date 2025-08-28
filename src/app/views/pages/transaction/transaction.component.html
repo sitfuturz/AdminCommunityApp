@@ -1,28 +1,66 @@
-<div class="container-fluid">
+<div class="container-fluid py-4">
   <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-    <div class="card-header header-bg d-flex justify-content-between align-items-center py-3">
+    <div class="card-header header-bg d-flex justify-content-between align-items-center py-3 px-4">
       <h4 class="mb-0 fw-bold text-white">
         <i class="bi bi-wallet me-2"></i>Income/Expense Management
       </h4>
       <div class="d-flex gap-2">
-        <button class="btn btn-light" (click)="openOpeningBalanceModal()" [disabled]="balance">Set Opening Balance</button>
-        <button class="btn btn-success" (click)="openIncomeModal()" [disabled]="!balance">Add Income</button>
-        <button class="btn btn-danger" (click)="openExpenseModal()" [disabled]="!balance">Add Expense</button>
+        <button class="btn btn-outline-light btn-sm" (click)="openOpeningBalanceModal()">
+          <i class="bi bi-bank me-1"></i>Set Opening Balance
+        </button>
+        <button class="btn btn-success btn-sm" (click)="openIncomeModal()">
+          <i class="bi bi-plus-circle me-1"></i>Add Income
+        </button>
+        <button class="btn btn-danger btn-sm" (click)="openExpenseModal()">
+          <i class="bi bi-dash-circle me-1"></i>Add Expense
+        </button>
       </div>
     </div>
     <div class="card-body p-0">
-      <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
-        <div class="d-flex w-100 align-items-center">
-          <div class="flex-grow-1 me-2">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Search transactions by description"
-              [(ngModel)]="searchQuery"
-              (input)="onSearch()"
-            />
+      <!-- Balance Display -->
+      <div class="p-4 bg-light border-bottom">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="balance-card p-3 bg-white rounded shadow-sm">
+              <h6 class="text-muted mb-2">Current Balance</h6>
+              <h3 class="fw-bold text-primary" *ngIf="balance; else noBalance">
+                ₹{{ balance.currentBalance.toFixed(2) }}
+              </h3>
+              <ng-template #noBalance>
+                <p class="text-warning mb-0">No balance set. Please set an opening balance.</p>
+              </ng-template>
+            </div>
           </div>
-          <div>
+          <div class="col-md-6">
+            <div class="balance-card p-3 bg-white rounded shadow-sm">
+              <h6 class="text-muted mb-2">Opening Balance</h6>
+              <h3 class="fw-bold text-primary" *ngIf="transactionsWithBalance; else noOpeningBalance">
+                ₹{{ transactionsWithBalance.openingBalance.toFixed(2) }}
+              </h3>
+              <ng-template #noOpeningBalance>
+                <p class="text-muted mb-0">No opening balance recorded.</p>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+        <div class="d-flex w-100 align-items-center gap-3">
+          <div class="flex-grow-1">
+            <div class="input-group">
+              <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+              <input
+                type="text"
+                class="form-control border-start-0"
+                placeholder="Search transactions by description"
+                [(ngModel)]="searchQuery"
+                (input)="onSearch()"
+              />
+            </div>
+          </div>
+          <div class="w-150px">
             <ng-select
               [items]="[10, 25, 50, 100]"
               (change)="onChange()"
@@ -33,28 +71,23 @@
           </div>
         </div>
       </div>
-      <div class="p-3">
-        <div class="alert alert-info" *ngIf="balance">
-          Current Balance: <strong>{{ balance.currentBalance.toFixed(2) }}</strong>
-          <span *ngIf="transactionsWithBalance"> | Opening Balance: <strong>{{ transactionsWithBalance.openingBalance.toFixed(2) }}</strong></span>
-        </div>
-        <div class="alert alert-warning" *ngIf="!balance">No balance set. Please set an opening balance.</div>
-      </div>
 
+      <!-- Loading State -->
       <div *ngIf="loading" class="text-center my-5 py-5">
         <div class="spinner-grow text-primary" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
 
-      <div *ngIf="!loading && filteredTransactions && filteredTransactions.length > 0" class="table-responsive">
+      <!-- Transaction Table -->
+      <div *ngIf="!loading && filteredTransactions && filteredTransactions.length > 0" class="table-responsive p-3">
         <table class="table table-hover align-middle mb-0">
           <thead class="bg-light">
             <tr>
-              <th class="ps-4 py-3" [width]="'15%'">Type</th>
-              <th class="py-3" [width]="'15%'">Amount</th>
+              <th class="ps-4 py-3" style="width: 15%">Type</th>
+              <th class="py-3" style="width: 15%">Amount</th>
               <th class="py-3">Description</th>
-              <th class="py-3" [width]="'15%'">Created At</th>
+              <th class="py-3" style="width: 15%">Created At</th>
             </tr>
           </thead>
           <tbody>
@@ -80,6 +113,7 @@
         </div>
       </div>
 
+      <!-- Empty State -->
       <div
         *ngIf="!loading && (!filteredTransactions || filteredTransactions.length === 0)"
         class="text-center my-5 py-4 px-4"
@@ -96,27 +130,33 @@
   <!-- Opening Balance Modal -->
   <div class="modal fade" [ngClass]="{ 'show d-block': showOpeningBalanceModal }" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Set Opening Balance</h5>
+      <div class="modal-content rounded-4 shadow">
+        <div class="modal-header bg-light border-0">
+          <h5 class="modal-title fw-bold">Set Opening Balance</h5>
           <button type="button" class="btn-close" (click)="closeOpeningBalanceModal()"></button>
         </div>
         <div class="modal-body">
           <form [formGroup]="openingBalanceForm">
             <div class="mb-3">
-              <label for="amount" class="form-label">Amount</label>
-              <input
-                type="number"
-                class="form-control"
-                id="amount"
-                formControlName="amount"
-                placeholder="Enter amount"
-                min="0"
-                step="0.01"
-              />
+              <label for="amount" class="form-label fw-medium">Amount</label>
+              <div class="input-group">
+                <span class="input-group-text">₹</span>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="amount"
+                  formControlName="amount"
+                  placeholder="Enter amount"
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+              <small class="text-danger" *ngIf="openingBalanceForm.get('amount')?.invalid && openingBalanceForm.get('amount')?.touched">
+                Please enter a valid amount (minimum 0).
+              </small>
             </div>
             <div class="mb-3">
-              <label for="description" class="form-label">Description (Optional)</label>
+              <label for="description" class="form-label fw-medium">Description (Optional)</label>
               <input
                 type="text"
                 class="form-control"
@@ -127,15 +167,15 @@
             </div>
           </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeOpeningBalanceModal()">Close</button>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-secondary" (click)="closeOpeningBalanceModal()">Cancel</button>
           <button
             type="button"
             class="btn btn-primary"
             (click)="submitOpeningBalance()"
             [disabled]="openingBalanceForm.invalid"
           >
-            Submit
+            Set Balance
           </button>
         </div>
       </div>
@@ -145,27 +185,33 @@
   <!-- Income Modal -->
   <div class="modal fade" [ngClass]="{ 'show d-block': showIncomeModal }" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Add Income</h5>
+      <div class="modal-content rounded-4 shadow">
+        <div class="modal-header bg-light border-0">
+          <h5 class="modal-title fw-bold">Add Income</h5>
           <button type="button" class="btn-close" (click)="closeIncomeModal()"></button>
         </div>
         <div class="modal-body">
           <form [formGroup]="incomeForm">
             <div class="mb-3">
-              <label for="incomeAmount" class="form-label">Amount</label>
-              <input
-                type="number"
-                class="form-control"
-                id="incomeAmount"
-                formControlName="amount"
-                placeholder="Enter amount"
-                min="0.01"
-                step="0.01"
-              />
+              <label for="incomeAmount" class="form-label fw-medium">Amount</label>
+              <div class="input-group">
+                <span class="input-group-text">₹</span>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="incomeAmount"
+                  formControlName="amount"
+                  placeholder="Enter amount"
+                  min="0.01"
+                  step="0.01"
+                />
+              </div>
+              <small class="text-danger" *ngIf="incomeForm.get('amount')?.invalid && incomeForm.get('amount')?.touched">
+                Please enter a valid amount (minimum 0.01).
+              </small>
             </div>
             <div class="mb-3">
-              <label for="incomeDescription" class="form-label">Description</label>
+              <label for="incomeDescription" class="form-label fw-medium">Description</label>
               <input
                 type="text"
                 class="form-control"
@@ -173,18 +219,21 @@
                 formControlName="description"
                 placeholder="Enter description"
               />
+              <small class="text-danger" *ngIf="incomeForm.get('description')?.invalid && incomeForm.get('description')?.touched">
+                Description is required.
+              </small>
             </div>
           </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeIncomeModal()">Close</button>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-secondary" (click)="closeIncomeModal()">Cancel</button>
           <button
             type="button"
             class="btn btn-success"
             (click)="submitIncome()"
             [disabled]="incomeForm.invalid"
           >
-            Submit
+            Add Income
           </button>
         </div>
       </div>
@@ -194,27 +243,33 @@
   <!-- Expense Modal -->
   <div class="modal fade" [ngClass]="{ 'show d-block': showExpenseModal }" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Add Expense</h5>
+      <div class="modal-content rounded-4 shadow">
+        <div class="modal-header bg-light border-0">
+          <h5 class="modal-title fw-bold">Add Expense</h5>
           <button type="button" class="btn-close" (click)="closeExpenseModal()"></button>
         </div>
         <div class="modal-body">
           <form [formGroup]="expenseForm">
             <div class="mb-3">
-              <label for="expenseAmount" class="form-label">Amount</label>
-              <input
-                type="number"
-                class="form-control"
-                id="expenseAmount"
-                formControlName="amount"
-                placeholder="Enter amount"
-                min="0.01"
-                step="0.01"
-              />
+              <label for="expenseAmount" class="form-label fw-medium">Amount</label>
+              <div class="input-group">
+                <span class="input-group-text">₹</span>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="expenseAmount"
+                  formControlName="amount"
+                  placeholder="Enter amount"
+                  min="0.01"
+                  step="0.01"
+                />
+              </div>
+              <small class="text-danger" *ngIf="expenseForm.get('amount')?.invalid && expenseForm.get('amount')?.touched">
+                Please enter a valid amount (minimum 0.01).
+              </small>
             </div>
             <div class="mb-3">
-              <label for="expenseDescription" class="form-label">Description</label>
+              <label for="expenseDescription" class="form-label fw-medium">Description</label>
               <input
                 type="text"
                 class="form-control"
@@ -222,18 +277,21 @@
                 formControlName="description"
                 placeholder="Enter description"
               />
+              <small class="text-danger" *ngIf="expenseForm.get('description')?.invalid && expenseForm.get('description')?.touched">
+                Description is required.
+              </small>
             </div>
           </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeExpenseModal()">Close</button>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-secondary" (click)="closeExpenseModal()">Cancel</button>
           <button
             type="button"
             class="btn btn-danger"
             (click)="submitExpense()"
             [disabled]="expenseForm.invalid"
           >
-            Submit
+            Add Expense
           </button>
         </div>
       </div>
