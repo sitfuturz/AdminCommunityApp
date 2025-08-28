@@ -43,6 +43,9 @@ import { GalleryComponent } from './views/pages/gallery/gallery.component';
 import { DocumentComponent } from './views/pages/document/document.component';
 import { LeadsComponent } from './views/pages/leads/leads.component';
 import { SurveyComponent } from './views/pages/survey/survey.component';
+import { PollComponent } from './views/pages/poll/poll.component';
+import { TransactionComponent } from './views/pages/transaction/transaction.component';
+import { CasteComponent } from './views/pages/caste/caste.component';
 
 
 export const routes: Routes = [
@@ -99,6 +102,9 @@ export const routes: Routes = [
       { path: 'gallery', component: GalleryComponent },
       { path: 'survey', component: SurveyComponent },
       { path: 'leads', component: LeadsComponent },
+      { path: 'poll', component: PollComponent },
+      {path: 'transaction', component: TransactionComponent},
+      {path: 'caste', component: CasteComponent}
     ],
   },
 ];

@@ -165,6 +165,17 @@ class ApiEndpoints {
   //survey
   public SURVEY_GET_ALL: string = `${this.PATH}/fetchAdminSurveys`;
 
+  //poll
+  public POLL_GET_ALL: string = `${this.PATH}/fetchAdminPolls`;
+
+  //transactions
+  public TRANSACTION_GET_ALL: string = `${this.PATH}/fetchAdminTransactions`
+
+  //castes
+  public CASTE_GET_ALL: string = `${this.PATH}/fetchAllCastes`;
+  public CASTE_ADD: string = `${this.PATH}/addCaste`;
+  public CASTE_DELETE: string = `${this.PATH}/deleteCaste`;
+  public CASTE_UPDATE: string = `${this.PATH}/updateCaste`;
 }
 
 export let apiEndpoints = new ApiEndpoints();
