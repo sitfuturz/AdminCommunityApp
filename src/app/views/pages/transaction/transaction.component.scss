@@ -51,6 +51,18 @@
   }
 }
 
+.modal {
+  &.show {
+    background: rgba(0, 0, 0, 0.5);
+  }
+  .modal-content {
+    border-radius: 0.5rem;
+  }
+  .modal-header {
+    background: #f8f9fa;
+  }
+}
+
 @media (max-width: 768px) {
   .d-flex {
     flex-direction: column;

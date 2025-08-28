@@ -187,8 +187,14 @@ class ApiEndpoints {
   public POLL_GET: string = `${this.PATH}/fetchPolls`;
 
 
-  //transactions
-  public TRANSACTION_GET_ALL: string = `${this.PATH}/fetchAdminTransactions`
+  // transactions
+public TRANSACTION_SET_OPENING_BALANCE: string = `${this.PATH}/transactions/setOpeningBalance`;
+public TRANSACTION_ADD_INCOME: string = `${this.PATH}/transactions/addIncome`;
+public TRANSACTION_ADD_EXPENSE: string = `${this.PATH}/transactions/addExpense`;
+public TRANSACTION_GET_ALL: string = `${this.PATH}/fetchAdminTransactions`;
+public TRANSACTION_GET_BALANCE: string = `${this.PATH}/transactions/getBalance`;
+public TRANSACTION_FETCH_WITH_BALANCE: string = `${this.PATH}/transactions/fetchTransactionsWithBalance`;
+
 
   //castes
   public CASTE_GET_ALL: string = `${this.PATH}/fetchAllCastes`;
@@ -199,18 +205,10 @@ class ApiEndpoints {
 
 export let apiEndpoints = new ApiEndpoints();
 
-//poll
-// router.post('/createPoll',  pollController.createPoll);
-// router.post('/fetchPolls', authMiddleware, pollController.getAllPolls);
-
-// router.post('/fetchAdminPolls',authMiddleware, pollController.getAdminAllPolls);
-
-// //survey
-// router.post('/createSurvey',  surveyController.createSurvey);
-// router.post('/fetchSurveys', authMiddleware, surveyController.getAllSurveys);
-// router.post('/fetchSurveyResponses', authMiddleware, surveyController.getSurveyResponses);
-
-// router.post('/fetchAdminSurveys',authMiddleware, surveyController.getadminAllSurveys);
-
-
+// router.post('/transactions/setOpeningBalance', authMiddleware, transcationController.setOpeningBalance);
+// router.post('/transactions/addIncome', authMiddleware, transcationController.addIncome);
+// router.post('/transactions/addExpense', authMiddleware, transcationController.addExpense);
+// router.post('/fetchAdminTransactions', authMiddleware, transcationController.getAdminTransactions);
+// router.post('/transactions/getBalance', authMiddleware, transcationController.getBalance);
+// router.post('/transactions/fetchTransactionsWithBalance', authMiddleware, transcationController.fetchTransactionsWithBalance);
 

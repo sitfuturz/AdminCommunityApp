@@ -4,6 +4,11 @@
       <h4 class="mb-0 fw-bold text-white">
         <i class="bi bi-wallet me-2"></i>Income/Expense Management
       </h4>
+      <div class="d-flex gap-2">
+        <button class="btn btn-light" (click)="openOpeningBalanceModal()" [disabled]="balance">Set Opening Balance</button>
+        <button class="btn btn-success" (click)="openIncomeModal()" [disabled]="!balance">Add Income</button>
+        <button class="btn btn-danger" (click)="openExpenseModal()" [disabled]="!balance">Add Expense</button>
+      </div>
     </div>
     <div class="card-body p-0">
       <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
@@ -13,8 +18,8 @@
               type="text"
               class="form-control"
               placeholder="Search transactions by description"
-              [(ngModel)]="payload.search"
-              (input)="onChange()"
+              [(ngModel)]="searchQuery"
+              (input)="onSearch()"
             />
           </div>
           <div>
@@ -23,75 +28,214 @@
               (change)="onChange()"
               [(ngModel)]="payload.limit"
               placeholder="Items per page"
+              class="custom-ng-select"
             ></ng-select>
           </div>
         </div>
       </div>
-    </div>
+      <div class="p-3">
+        <div class="alert alert-info" *ngIf="balance">
+          Current Balance: <strong>{{ balance.currentBalance.toFixed(2) }}</strong>
+          <span *ngIf="transactionsWithBalance"> | Opening Balance: <strong>{{ transactionsWithBalance.openingBalance.toFixed(2) }}</strong></span>
+        </div>
+        <div class="alert alert-warning" *ngIf="!balance">No balance set. Please set an opening balance.</div>
+      </div>
 
-    <div *ngIf="loading" class="text-center my-5 py-5">
-      <div class="spinner-grow text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+      <div *ngIf="loading" class="text-center my-5 py-5">
+        <div class="spinner-grow text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div *ngIf="!loading && filteredTransactions && filteredTransactions.length > 0" class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-light">
+            <tr>
+              <th class="ps-4 py-3" [width]="'15%'">Type</th>
+              <th class="py-3" [width]="'15%'">Amount</th>
+              <th class="py-3">Description</th>
+              <th class="py-3" [width]="'15%'">Created At</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let transaction of filteredTransactions; let i = index" class="border-bottom">
+              <td class="ps-4 py-3">
+                <span class="badge rounded-pill" [ngClass]="getTypeBadgeClass(transaction.type)">
+                  {{ transaction.type | titlecase }}
+                </span>
+              </td>
+              <td class="py-3">
+                <span [ngClass]="getAmountClass(transaction.type)">
+                  {{ formatAmount(transaction.amount, transaction.type) }}
+                </span>
+              </td>
+              <td class="py-3">{{ transaction.description }}</td>
+              <td class="py-3">{{ formatDate(transaction.createdAt) }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="d-flex justify-content-end p-3">
+          <pagination-controls (pageChange)="onPageChange($event)" class="custom-pagination"></pagination-controls>
+        </div>
+      </div>
+
+      <div
+        *ngIf="!loading && (!filteredTransactions || filteredTransactions.length === 0)"
+        class="text-center my-5 py-4 px-4"
+      >
+        <div class="empty-state">
+          <i class="bi bi-wallet fs-1 text-muted mb-3"></i>
+          <h5>No Transactions Found</h5>
+          <p class="text-muted">No transactions available at the moment.</p>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div *ngIf="!loading && filteredTransactions && filteredTransactions.length > 0" class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="bg-light">
-          <tr>
-            <th class="ps-4 py-3" [width]="'15%'">Type</th>
-            <th class="py-3" [width]="'15%'">Amount</th>
-            <th class="py-3">Description</th>
-            <th class="py-3" [width]="'15%'">Created At</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="
-              let transaction of filteredTransactions
-                | paginate
-                  : {
-                      itemsPerPage: payload.limit,
-                      currentPage: payload.page,
-                      totalItems: totalDocs
-                    };
-              let i = index
-            "
-            class="border-bottom"
+  <!-- Opening Balance Modal -->
+  <div class="modal fade" [ngClass]="{ 'show d-block': showOpeningBalanceModal }" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Set Opening Balance</h5>
+          <button type="button" class="btn-close" (click)="closeOpeningBalanceModal()"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="openingBalanceForm">
+            <div class="mb-3">
+              <label for="amount" class="form-label">Amount</label>
+              <input
+                type="number"
+                class="form-control"
+                id="amount"
+                formControlName="amount"
+                placeholder="Enter amount"
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Description (Optional)</label>
+              <input
+                type="text"
+                class="form-control"
+                id="description"
+                formControlName="description"
+                placeholder="Enter description"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeOpeningBalanceModal()">Close</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="submitOpeningBalance()"
+            [disabled]="openingBalanceForm.invalid"
           >
-            <td class="ps-4 py-3">
-              <span class="badge rounded-pill" [ngClass]="getTypeBadgeClass(transaction.type)">
-                {{ transaction.type | titlecase }}
-              </span>
-            </td>
-            <td class="py-3">
-              <span [ngClass]="getAmountClass(transaction.type)">
-                {{ formatAmount(transaction.amount, transaction.type) }}
-              </span>
-            </td>
-            <td class="py-3">
-              <div>{{ transaction.description }}</div>
-            </td>
-            <td class="py-3">
-              {{ formatDate(transaction.createdAt) }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="d-flex justify-content-end p-3">
-        <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
+            Submit
+          </button>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div
-      *ngIf="!loading && (!filteredTransactions || filteredTransactions.length === 0)"
-      class="text-center my-5 py-4 px-4"
-    >
-      <div class="empty-state">
-        <i class="bi bi-wallet fs-1 text-muted mb-3"></i>
-        <h5>No Transactions Found</h5>
-        <p class="text-muted">No transactions available at the moment.</p>
+  <!-- Income Modal -->
+  <div class="modal fade" [ngClass]="{ 'show d-block': showIncomeModal }" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Income</h5>
+          <button type="button" class="btn-close" (click)="closeIncomeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="incomeForm">
+            <div class="mb-3">
+              <label for="incomeAmount" class="form-label">Amount</label>
+              <input
+                type="number"
+                class="form-control"
+                id="incomeAmount"
+                formControlName="amount"
+                placeholder="Enter amount"
+                min="0.01"
+                step="0.01"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="incomeDescription" class="form-label">Description</label>
+              <input
+                type="text"
+                class="form-control"
+                id="incomeDescription"
+                formControlName="description"
+                placeholder="Enter description"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeIncomeModal()">Close</button>
+          <button
+            type="button"
+            class="btn btn-success"
+            (click)="submitIncome()"
+            [disabled]="incomeForm.invalid"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expense Modal -->
+  <div class="modal fade" [ngClass]="{ 'show d-block': showExpenseModal }" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Expense</h5>
+          <button type="button" class="btn-close" (click)="closeExpenseModal()"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="expenseForm">
+            <div class="mb-3">
+              <label for="expenseAmount" class="form-label">Amount</label>
+              <input
+                type="number"
+                class="form-control"
+                id="expenseAmount"
+                formControlName="amount"
+                placeholder="Enter amount"
+                min="0.01"
+                step="0.01"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="expenseDescription" class="form-label">Description</label>
+              <input
+                type="text"
+                class="form-control"
+                id="expenseDescription"
+                formControlName="description"
+                placeholder="Enter description"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeExpenseModal()">Close</button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="submitExpense()"
+            [disabled]="expenseForm.invalid"
+          >
+            Submit
+          </button>
+        </div>
       </div>
     </div>
   </div>
