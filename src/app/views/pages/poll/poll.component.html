@@ -4,6 +4,9 @@
       <h4 class="mb-0 fw-bold text-white">
         <i class="bi bi-bar-chart me-2"></i>Poll Management
       </h4>
+      <button class="btn btn-light" (click)="openCreateModal()">
+        <i class="bi bi-plus-circle me-2"></i>Create Poll
+      </button>
     </div>
     <div class="card-body p-0">
       <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
@@ -45,6 +48,7 @@
             <th class="py-3" [width]="'10%'">Status</th>
             <th class="py-3" [width]="'10%'">Expiry Date</th>
             <th class="py-3" [width]="'10%'">Created At</th>
+            <th class="py-3" [width]="'10%'">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -86,6 +90,11 @@
             <td class="py-3">
               {{ formatDate(poll.createdAt) }}
             </td>
+            <td class="py-3">
+              <button class="btn btn-sm btn-outline-primary" (click)="openViewModal(poll._id)">
+                <i class="bi bi-eye me-1"></i>Preview
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -106,4 +115,91 @@
       </div>
     </div>
   </div>
+
+  <!-- Create Poll Modal -->
+  <div *ngIf="showCreateModal" class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create New Poll</h5>
+          <button type="button" class="btn-close" (click)="closeCreateModal()"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="createForm">
+            <div class="mb-3">
+              <label for="title" class="form-label">Title</label>
+              <input type="text" class="form-control" id="title" formControlName="title" />
+              <div *ngIf="createForm.get('title')?.invalid && createForm.get('title')?.touched" class="text-danger">
+                Title is required.
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea class="form-control" id="description" formControlName="description"></textarea>
+              <div *ngIf="createForm.get('description')?.invalid && createForm.get('description')?.touched" class="text-danger">
+                Description is required.
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Options</label>
+              <div formArrayName="options">
+                <div *ngFor="let option of options.controls; let i = index" class="input-group mb-2">
+                  <input type="text" class="form-control" [formControlName]="i" placeholder="Option text" />
+                  <button class="btn btn-outline-danger" type="button" (click)="removeOption(i)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <button class="btn btn-outline-primary" type="button" (click)="addOption()">Add Option</button>
+              <div *ngIf="options.length === 0 && createForm.touched" class="text-danger">
+                At least one option is required.
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="expiryDate" class="form-label">Expiry Date</label>
+              <input type="datetime-local" class="form-control" id="expiryDate" formControlName="expiryDate" />
+              <div *ngIf="createForm.get('expiryDate')?.invalid && createForm.get('expiryDate')?.touched" class="text-danger">
+                Expiry date is required.
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeCreateModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="submitCreatePoll()" [disabled]="createForm.invalid">Create</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="showCreateModal" class="modal-backdrop fade show"></div>
+
+  <!-- View Poll Modal -->
+  <div *ngIf="showViewModal" class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Poll Details</h5>
+          <button type="button" class="btn-close" (click)="closeViewModal()"></button>
+        </div>
+        <div class="modal-body" *ngIf="selectedPoll">
+          <h5>{{ selectedPoll.title }}</h5>
+          <p>{{ selectedPoll.description }}</p>
+          <h6>Options:</h6>
+          <ul>
+            <li *ngFor="let option of selectedPoll.options">
+              {{ option.text }} - Votes: {{ option.voteCount }} ({{ option.percentage }}%)
+            </li>
+          </ul>
+          <p>Total Votes: {{ selectedPoll.totalVotes }}</p>
+          <p>Status: {{ formatExpiryStatus(selectedPoll.expiryDate, selectedPoll.isActive) }}</p>
+          <p>Expiry Date: {{ formatDate(selectedPoll.expiryDate) }}</p>
+          <p>Created At: {{ formatDate(selectedPoll.createdAt) }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeViewModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="showViewModal" class="modal-backdrop fade show"></div>
 </div>

@@ -38,7 +38,7 @@ export class PollService {
     }
   };
 
-  async getPolls(data: any): Promise<Poll[]> {
+  async getAllPolls(data: any): Promise<Poll[]> {
     try {
       this.getHeaders();
       const response = await this.apiManager.request(
@@ -60,4 +60,53 @@ export class PollService {
       throw err;
     }
   }
+
+   async createPoll(data: any): Promise<Poll[]> {
+    try {
+      this.getHeaders();
+      const response = await this.apiManager.request(
+        {
+          url: apiEndpoints.POLL_CREATE,
+          method: 'POST',
+        },
+        data,
+        this.headers
+      );
+      if (response.status === 200 && response.data) {
+        return response.data;
+      } else {
+        swalHelper.showToast(response.message || 'No polls Created', 'warning');
+        throw new Error(response.message || 'No polls Created');
+      }
+    } catch (err) {
+      swalHelper.showToast('Something went wrong!', 'error');
+      throw err;
+    }
+  }
+
+   async getSinglePoll(data: any): Promise<Poll[]> {
+    try {
+      this.getHeaders();
+      const response = await this.apiManager.request(
+        {
+          url: apiEndpoints.POLL_GET,
+          method: 'POST',
+        },
+        data,
+        this.headers
+      );
+      if (response.status === 200 && response.data) {
+        return response.data;
+      } else {
+        swalHelper.showToast(response.message || 'No polls found', 'warning');
+        throw new Error(response.message || 'No polls found');
+      }
+    } catch (err) {
+      swalHelper.showToast('Something went wrong!', 'error');
+      throw err;
+    }
+  }
+
+
+
 }

@@ -181,6 +181,9 @@ class ApiEndpoints {
 
   //poll
   public POLL_GET_ALL: string = `${this.PATH}/fetchAdminPolls`;
+  public POLL_CREATE: string = `${this.PATH}/createPoll`;
+  public POLL_GET: string = `${this.PATH}/fetchPolls`;
+
 
   //transactions
   public TRANSACTION_GET_ALL: string = `${this.PATH}/fetchAdminTransactions`
@@ -193,6 +196,19 @@ class ApiEndpoints {
 }
 
 export let apiEndpoints = new ApiEndpoints();
+
+//poll
+// router.post('/createPoll',  pollController.createPoll);
+// router.post('/fetchPolls', authMiddleware, pollController.getAllPolls);
+
+// router.post('/fetchAdminPolls',authMiddleware, pollController.getAdminAllPolls);
+
+// //survey
+// router.post('/createSurvey',  surveyController.createSurvey);
+// router.post('/fetchSurveys', authMiddleware, surveyController.getAllSurveys);
+// router.post('/fetchSurveyResponses', authMiddleware, surveyController.getSurveyResponses);
+
+// router.post('/fetchAdminSurveys',authMiddleware, surveyController.getadminAllSurveys);
 
 
 
