@@ -80,7 +80,7 @@
       </div>
 
       <!-- Transaction Table -->
-      <div *ngIf="!loading && filteredTransactions && filteredTransactions.length > 0" class="table-responsive p-3">
+      <div *ngIf="!loading && transactionsWithBalance && transactionsWithBalance.transactions && transactionsWithBalance.transactions.length > 0" class="table-responsive p-3">
         <table class="table table-hover align-middle mb-0">
           <thead class="bg-light">
             <tr>
@@ -91,7 +91,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let transaction of filteredTransactions; let i = index" class="border-bottom">
+            <tr *ngFor="let transaction of transactionsWithBalance.transactions | paginate: { itemsPerPage: payload.limit, currentPage: payload.page, totalItems: transactionsWithBalance.transactions.length }; let i = index" class="border-bottom">
               <td class="ps-4 py-3">
                 <span class="badge rounded-pill" [ngClass]="getTypeBadgeClass(transaction.type)">
                   {{ transaction.type | titlecase }}
@@ -115,7 +115,7 @@
 
       <!-- Empty State -->
       <div
-        *ngIf="!loading && (!filteredTransactions || filteredTransactions.length === 0)"
+        *ngIf="!loading && (!transactionsWithBalance || !transactionsWithBalance.transactions || transactionsWithBalance.transactions.length === 0)"
         class="text-center my-5 py-4 px-4"
       >
         <div class="empty-state">

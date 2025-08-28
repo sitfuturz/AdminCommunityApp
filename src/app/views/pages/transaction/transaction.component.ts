@@ -15,10 +15,8 @@ import { TransactionService, Transaction, TransactionBalance, TransactionsWithBa
   styleUrl: './transaction.component.scss'
 })
 export class TransactionComponent {
-  transactions: Transaction[] = [];
-  filteredTransactions: Transaction[] = [];
-  balance: TransactionBalance | null = null;
   transactionsWithBalance: TransactionsWithBalanceResponse | null = null;
+  balance: TransactionBalance | null = null;
   loading: boolean = false;
   searchQuery: string = '';
   showOpeningBalanceModal: boolean = false;
@@ -57,7 +55,8 @@ export class TransactionComponent {
     });
 
     this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
-      this.applySearchAndPagination();
+      this.payload.page = 1;
+      this.fetchTransactionsWithBalance();
     });
   }
 
@@ -69,16 +68,13 @@ export class TransactionComponent {
   async fetchTransactionsWithBalance(): Promise<void> {
     this.loading = true;
     try {
-      const response = await this.transactionService.fetchTransactionsWithBalance({});
+      const response = await this.transactionService.fetchTransactionsWithBalance(this.payload);
       this.transactionsWithBalance = response || null;
-      this.transactions = response?.transactions || [];
-      this.applySearchAndPagination();
       this.cdr.detectChanges();
     } catch (error: any) {
       console.error('Error fetching transactions with balance:', error);
       swalHelper.showToast(error.message || 'Failed to fetch transactions', 'error');
-      this.transactions = [];
-      this.filteredTransactions = [];
+      this.transactionsWithBalance = null;
     } finally {
       this.loading = false;
     }
@@ -96,44 +92,19 @@ export class TransactionComponent {
     }
   }
 
-  applySearchAndPagination(): void {
-    let filtered = this.transactions;
-    if (this.payload.search) {
-      const searchLower = this.payload.search.toLowerCase();
-      filtered = this.transactions.filter(
-        transaction => transaction.description.toLowerCase().includes(searchLower)
-      );
-    }
-
-    const start = (this.payload.page - 1) * this.payload.limit;
-    const end = start + this.payload.limit;
-    this.filteredTransactions = filtered.slice(start, end);
-    this.cdr.detectChanges();
-  }
-
   onSearch(): void {
-    this.payload.page = 1;
     this.payload.search = this.searchQuery;
     this.searchSubject.next(this.searchQuery);
   }
 
   onChange(): void {
     this.payload.page = 1;
-    this.applySearchAndPagination();
+    this.fetchTransactionsWithBalance();
   }
 
   onPageChange(page: number): void {
     this.payload.page = page;
-    this.applySearchAndPagination();
-  }
-
-  get totalDocs(): number {
-    const searchLower = this.payload.search.toLowerCase();
-    return this.payload.search
-      ? this.transactions.filter(
-          transaction => transaction.description.toLowerCase().includes(searchLower)
-        ).length
-      : this.transactions.length;
+    this.fetchTransactionsWithBalance();
   }
 
   formatDate(dateString: string): string {
