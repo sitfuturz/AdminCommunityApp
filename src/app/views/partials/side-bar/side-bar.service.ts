@@ -56,12 +56,12 @@ export class SideBarService {
             {
               title: 'Castes',
               link: 'caste',
-              icon: 'map-pin',
+              icon: 'cast',
             },
             {
-              title: 'subcaste',
+              title: 'SubCastes',
               link: 'subcaste',
-              icon: 'map-pin',
+              icon: 'user-minus',
             },
             {
               title: 'Industries',
@@ -183,14 +183,14 @@ export class SideBarService {
               icon: 'heart',
             },
             {
-              title:'secondHand Product',
+              title:'Buy & Sell Product',
               link:'secondHand',
-              icon:'calendar'
+              icon:'shopping-cart'
             },
             {
               title:'Family History',
               link:'family',
-              icon:'calendar'
+              icon:'users'
             },
           ],
         },
@@ -207,7 +207,7 @@ export class SideBarService {
             {
               title: 'Blood Group',
               link: 'blood-group',
-              icon: 'briefcase',
+              icon: 'droplet',
             },
           ],
         },
