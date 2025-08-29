@@ -248,11 +248,11 @@ export class SideBarService {
               link: 'suggestions',
               icon: 'edit',
             },
-            {
-              title: 'Contact Us',
-              link: 'contactUs',
-              icon: 'mail',
-            },
+            // {
+            //   title: 'Contact Us',
+            //   link: 'contactUs',
+            //   icon: 'mail',
+            // },
           ],
         },
         {
